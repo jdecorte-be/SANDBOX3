@@ -9,6 +9,7 @@ import { ValidationPipe } from '@nestjs/common';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const configService = app.get(ConfigService);
+  const PORT = configService.get<any>('PORT');
   app.useGlobalPipes(new ValidationPipe());
   app.setGlobalPrefix('app');
   app.use(cookieParser());
@@ -25,6 +26,6 @@ async function bootstrap() {
   app.use(passport.initialize());
   app.use(passport.session());
   app.enableCors();
-  await app.listen(configService.get<any>('PORT'));
+  await app.listen(PORT);
 }
 bootstrap();
