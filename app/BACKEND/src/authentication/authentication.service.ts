@@ -44,7 +44,7 @@ export class AuthenticationService {
     console.log(`login ${user}`);
     const payload = { login: user.login, sub: user.id };
     return {
-      access_token: this.jwtService.sign(payload),
+      Authorization: `Authorisation: Bearer ${this.jwtService.sign(payload)}`,
     };
   }
 

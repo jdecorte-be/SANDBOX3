@@ -1,28 +1,9 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-import { useContext, useEffect, useState } from 'react';
-import { WebsocketContext } from '../contexts/WebsocketContext';
+import { useState } from 'react';
+import axios from 'axios';
 
 export const SignUp = () => {
   const [login, setLogin] = useState('');
   const [password, setPassword] = useState('');
-  const socket = useContext(WebsocketContext);
-  useEffect(() => {
-    socket.on('register', (user) => {
-      // User attempting to register
-      console.log('register---> ', user);
-    });
-    socket.on('signup_error', (data) => {
-      // New user and checking for duplicate
-      console.log('signup error--> ', data);
-      if (parseInt(data.code) === 23505) {
-        console.log('Login already in use');
-      }
-    });
-    return () => {
-      socket.off('register');
-      socket.off('signup_error');
-    };
-  }, []);
 
   const handleSubmit = async (event: any) => {
     event.preventDefault();
@@ -33,7 +14,7 @@ export const SignUp = () => {
     };
     setLogin('');
     setPassword('');
-    socket.emit('register', form);
+    axios.post('http://localhost:3001/app/auth/signup', form);
   };
 
   return (
@@ -59,7 +40,7 @@ export const SignUp = () => {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
-          <input type="file" name="avatar" id="avatar"/>
+          <input type="file" name="avatar" id="avatar" />
           <button type="submit">SUBMIT</button>
         </form>
       </div>

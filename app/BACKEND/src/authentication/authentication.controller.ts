@@ -44,7 +44,7 @@ export class AuthenticationController {
       console.log(
         `authentication.controller: signUp(${newUser.login}) ---> SUCCESS`,
       );
-      return res.redirect('http://localhost:3001/signin');
+      return res.redirect('http://localhost:3000');
     }
     console.log(
       `authentication.controller: signUp(${newUser.login}) ---> FAIL`,
@@ -56,17 +56,13 @@ export class AuthenticationController {
   async signIn(@Res() res: Response, @Body() body: SignDto) {
     const foundUser = await this.userService.findOneByLogin(body.login);
     if (foundUser) {
+      console.log(`authentication.controller: signin(${body}) ---> SUCCESS`);
       const log = await this.authService.login(body);
-      const cookie = this.authService.getCookieWithJwtToken(foundUser.id);
-      console.log(
-        `authentication.controller: signin(${foundUser.login}) access_token(${log.access_token}) ---> SUCCESS`,
-      );
-      res.setHeader('Set-Cookie', cookie);
-      //res.redirect('http://localhost:3000/app');
+      res.setHeader('Set-Cookie', log.Authorization);
       return res.send(log);
     }
     console.log(`authentication.controller: signin(${body}) ---> FAIL`);
-    return res.redirect('http://localhost:3001/signin');
+    return res.status(401);
   }
 
   @UseGuards(JwtAuthenticationGuard)
