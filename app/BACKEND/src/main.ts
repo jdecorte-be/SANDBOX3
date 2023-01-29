@@ -25,7 +25,11 @@ async function bootstrap() {
   );
   app.use(passport.initialize());
   app.use(passport.session());
-  app.enableCors();
+  app.enableCors({
+    origin: 'http://localhost:3000',
+    methods: ['GET', 'POST', 'PATCH'],
+    optionsSuccessStatus: 200,
+  });
   await app.listen(PORT);
 }
 bootstrap();

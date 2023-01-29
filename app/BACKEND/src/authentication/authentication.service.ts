@@ -43,9 +43,7 @@ export class AuthenticationService {
   async login(user: any) {
     console.log(`login ${user}`);
     const payload = { login: user.login, sub: user.id };
-    return {
-      Authorization: `Authorisation: Bearer ${this.jwtService.sign(payload)}`,
-    };
+    return `Bearer ${this.jwtService.sign(payload)}`;
   }
 
   async signUp(user: SignDto): Promise<any> {

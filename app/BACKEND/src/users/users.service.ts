@@ -42,6 +42,7 @@ export class UsersService {
     const reqBody = {
       login: user.login,
       password: hash,
+      phoneNumber: user.phoneNumber,
     };
     const newUser = await this.userRepository.save(reqBody);
     if (newUser) {

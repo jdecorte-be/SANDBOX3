@@ -4,6 +4,7 @@ import axios from 'axios';
 export const SignUp = () => {
   const [login, setLogin] = useState('');
   const [password, setPassword] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
 
   const handleSubmit = async (event: any) => {
     event.preventDefault();
@@ -11,10 +12,19 @@ export const SignUp = () => {
     const form = {
       login: formData.get('login'),
       password: formData.get('password'),
+      phoneNumber: formData.get('tel'),
     };
-    setLogin('');
-    setPassword('');
-    axios.post('http://localhost:3001/app/auth/signup', form);
+    axios
+      .post('http://localhost:3001/app/auth/signup', form, {
+        headers: {},
+      })
+      .then((response) => {
+        document.cookie = response.data.Authorization;
+        console.log(response.data.Authorization);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
 
   return (
@@ -40,7 +50,14 @@ export const SignUp = () => {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
-          <input type="file" name="avatar" id="avatar" />
+          <input
+            type="tel"
+            name="tel"
+            maxLength={15}
+            placeholder="2FA phone number"
+            value={phoneNumber}
+            onChange={(e) => setPhoneNumber(e.target.value)}
+          />
           <button type="submit">SUBMIT</button>
         </form>
       </div>

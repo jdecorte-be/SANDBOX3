@@ -3,10 +3,15 @@ import React from 'react';
 import './App.css';
 import { SignUp } from './components/SignUp';
 import { SignIn } from './components/SignIn';
+import { Code2FA } from './components/Code2FA';
 
 function App() {
   return (
-      <><SignUp /><SignIn /></>
+      <>
+        <SignUp />
+        <SignIn />
+        <Code2FA />
+      </>
   );
 }
 

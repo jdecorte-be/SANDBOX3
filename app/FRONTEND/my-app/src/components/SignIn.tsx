@@ -12,12 +12,18 @@ export const SignIn = () => {
       login: formData.get('login'),
       password: formData.get('password'),
     };
-    setLogin('');
-    setPassword('');
-    const res = axios.post('http://localhost:3001/app/auth/signin', form);
-    const jwt = ((await res).data.Authorization);
-    document.cookie = jwt;
-    console.log(document.cookie); 
+    axios
+      .post('http://localhost:3001/app/auth/signin', form, {
+        headers: {},
+      })
+      .then((response) => {
+        document.cookie = response.data;
+        console.log('token = ', response.data);
+        localStorage.setItem('currentUser', login);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
 
   return (
