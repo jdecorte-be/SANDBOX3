@@ -8,7 +8,6 @@ import { JwtStrategy } from './jwt.strategy';
 import { SessionSerializer } from './serializer';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
-import { TestStrategy } from './test.strategy';
 import { TwilioModule } from 'nestjs-twilio';
 import { TFAService } from './twilio.service';
 
@@ -41,7 +40,6 @@ import { TFAService } from './twilio.service';
     AuthenticationService,
     LocalStrategy,
     JwtStrategy,
-    TestStrategy,
     SessionSerializer,
     TFAService,
   ],
