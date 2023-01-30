@@ -8,6 +8,7 @@ import { configValidationSchema } from './app.schemas';
 import { AuthenticationModule } from './authentication/authentication.module';
 import { DbfilesController } from './dbfiles/dbfiles.controller';
 import { DbfilesModule } from './dbfiles/dbfiles.module';
+import { GameGateway} from "./game/game.gateway";
 
 @Module({
   imports: [
@@ -37,6 +38,6 @@ import { DbfilesModule } from './dbfiles/dbfiles.module';
     DbfilesModule,
   ],
   controllers: [AppController, DbfilesController],
-  providers: [AppService],
+  providers: [AppService, GameGateway],
 })
 export class AppModule {}

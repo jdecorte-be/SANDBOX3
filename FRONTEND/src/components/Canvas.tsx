@@ -85,7 +85,7 @@ export class gameInfo{
 
 export class Gaming{
     Info:gameInfo;
-    socket = io("http://localhost:5001");
+    socket = io("http://localhost:3002");
 
     constructor(width: number, height: number)
     {
