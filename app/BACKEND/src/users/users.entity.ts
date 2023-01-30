@@ -20,9 +20,6 @@ export class User {
   @Exclude()
   password: string;
 
-  @Column()
-  phoneNumber: string;
-
   @Column({ default: false, nullable: true })
   public isActive: boolean;
 

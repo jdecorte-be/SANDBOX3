@@ -1,9 +1,25 @@
-import axios from 'axios';
-import { useState } from 'react';
+/* eslint-disable react-hooks/exhaustive-deps */
+import { useContext, useEffect, useState } from 'react';
+import { WebsocketContext } from '../contexts/WebsocketContext';
 
 export const SignIn = () => {
   const [login, setLogin] = useState('');
   const [password, setPassword] = useState('');
+  const socket = useContext(WebsocketContext);
+  useEffect(() => {
+    socket.on('login', (user) => {
+      // User logged in
+      console.log('login---> ', user);
+    });
+    socket.on('logged', (token) => {
+      // User access token
+      console.log('logged ---> ', token);
+    });
+    return () => {
+      socket.off('logged');
+      socket.off('login');
+    };
+  }, []);
 
   const handleSubmit = async (event: any) => {
     event.preventDefault();
@@ -12,18 +28,9 @@ export const SignIn = () => {
       login: formData.get('login'),
       password: formData.get('password'),
     };
-    axios
-      .post('http://localhost:3001/app/auth/signin', form, {
-        headers: {},
-      })
-      .then((response) => {
-        document.cookie = response.data;
-        console.log('token = ', response.data);
-        localStorage.setItem('currentUser', login);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    setLogin('');
+    setPassword('');
+    socket.emit('login', form);
   };
 
   return (

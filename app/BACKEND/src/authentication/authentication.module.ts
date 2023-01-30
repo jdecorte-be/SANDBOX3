@@ -1,4 +1,4 @@
-import { CacheModule, Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { AuthenticationService } from './authentication.service';
 import { AuthenticationController } from './authentication.controller';
 import { UsersModule } from 'src/users/users.module';
@@ -8,15 +8,13 @@ import { JwtStrategy } from './jwt.strategy';
 import { SessionSerializer } from './serializer';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
-import { TwilioModule } from 'nestjs-twilio';
-import { TFAService } from './twilio.service';
+import { TestStrategy } from './test.strategy';
 
 @Module({
   imports: [
     UsersModule,
     PassportModule,
     ConfigModule,
-    CacheModule.register({ ttl: 300, max: 10 }),
     JwtModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
@@ -27,21 +25,13 @@ import { TFAService } from './twilio.service';
         },
       }),
     }),
-    TwilioModule.forRootAsync({
-      imports: [ConfigModule],
-      useFactory: (configService: ConfigService) => ({
-        accountSid: configService.get('TWILIO_SID'),
-        authToken: configService.get('TWILIO_AUTH_TOKEN'),
-      }),
-      inject: [ConfigService],
-    }),
   ],
   providers: [
     AuthenticationService,
     LocalStrategy,
     JwtStrategy,
+    TestStrategy,
     SessionSerializer,
-    TFAService,
   ],
   exports: [AuthenticationService],
   controllers: [AuthenticationController],

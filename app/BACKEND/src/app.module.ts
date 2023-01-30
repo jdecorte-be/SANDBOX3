@@ -8,6 +8,7 @@ import { configValidationSchema } from './app.schemas';
 import { AuthenticationModule } from './authentication/authentication.module';
 import { DbfilesController } from './dbfiles/dbfiles.controller';
 import { DbfilesModule } from './dbfiles/dbfiles.module';
+import { GatewayModule } from './gateway/gateway.module';
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import { DbfilesModule } from './dbfiles/dbfiles.module';
       },
     }),
     DbfilesModule,
+    GatewayModule,
   ],
   controllers: [AppController, DbfilesController],
   providers: [AppService],

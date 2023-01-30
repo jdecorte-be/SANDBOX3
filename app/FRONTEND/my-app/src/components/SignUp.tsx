@@ -1,10 +1,28 @@
-import { useState } from 'react';
-import axios from 'axios';
+/* eslint-disable react-hooks/exhaustive-deps */
+import { useContext, useEffect, useState } from 'react';
+import { WebsocketContext } from '../contexts/WebsocketContext';
 
 export const SignUp = () => {
   const [login, setLogin] = useState('');
   const [password, setPassword] = useState('');
-  const [phoneNumber, setPhoneNumber] = useState('');
+  const socket = useContext(WebsocketContext);
+  useEffect(() => {
+    socket.on('register', (user) => {
+      // User attempting to register
+      console.log('register---> ', user);
+    });
+    socket.on('signup_error', (data) => {
+      // New user and checking for duplicate
+      console.log('signup error--> ', data);
+      if (parseInt(data.code) === 23505) {
+        console.log('Login already in use');
+      }
+    });
+    return () => {
+      socket.off('register');
+      socket.off('signup_error');
+    };
+  }, []);
 
   const handleSubmit = async (event: any) => {
     event.preventDefault();
@@ -12,19 +30,10 @@ export const SignUp = () => {
     const form = {
       login: formData.get('login'),
       password: formData.get('password'),
-      phoneNumber: formData.get('tel'),
     };
-    axios
-      .post('http://localhost:3001/app/auth/signup', form, {
-        headers: {},
-      })
-      .then((response) => {
-        document.cookie = response.data.Authorization;
-        console.log(response.data.Authorization);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    setLogin('');
+    setPassword('');
+    socket.emit('register', form);
   };
 
   return (
@@ -50,14 +59,7 @@ export const SignUp = () => {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
-          <input
-            type="tel"
-            name="tel"
-            maxLength={15}
-            placeholder="2FA phone number"
-            value={phoneNumber}
-            onChange={(e) => setPhoneNumber(e.target.value)}
-          />
+          <input type="file" name="avatar" id="avatar"/>
           <button type="submit">SUBMIT</button>
         </form>
       </div>
