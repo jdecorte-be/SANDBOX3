@@ -5,8 +5,6 @@ import { SignUp } from './components/SignUp';
 import { SignIn } from './components/SignIn';
 import { Code2FA } from './components/Code2FA';
 import axios from "axios";
-
-
 const click = () => {
     axios
         .get('http://localhost:3001/app/auth/who', {
@@ -18,9 +16,7 @@ const click = () => {
         .catch((error) => {
             console.log(error);
         });
-
 }
-
 
 function App() {
   return (
