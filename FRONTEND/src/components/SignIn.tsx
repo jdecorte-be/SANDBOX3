@@ -1,10 +1,12 @@
 import axios from 'axios';
 import { useState } from 'react';
+import { useNavigate} from "react-router-dom";
 
 export const SignIn = () => {
   const [login, setLogin] = useState('');
   const [password, setPassword] = useState('');
 
+  const navigate = useNavigate();
   const handleSubmit = async (event: any) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
@@ -20,6 +22,7 @@ export const SignIn = () => {
         document.cookie = response.data;
         console.log('token = ', response.data);
         sessionStorage.setItem('currentUser', login);
+        navigate('/Move');
       })
       .catch((error) => {
         console.log(error);

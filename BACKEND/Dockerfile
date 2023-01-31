@@ -20,4 +20,4 @@ RUN npm install --frozen-lockfile --production
 COPY . .
 RUN npm install @nestjs/cli --global
 RUN npm run build
-CMD ["npm", "run", "start:prod"]
+CMD ["npm", "run", "start:prod"]ououai

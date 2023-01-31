@@ -24,11 +24,12 @@ export class LobbyManager {
         this.LobbyList.push(lobby);
         return lobby;
     }
-    JoinLobby(id: string) {
+    JoinLobby(login: string) {
+        const id = '0';
         const tLobby = this.LobbyList.find((lobby) => lobby.id === id);
         if (tLobby && tLobby.Players.length < 2)
         {
-            if (tLobby.Players.push('Name'))
+            if (tLobby.Players.push(login))
                 return tLobby;
         }
         else

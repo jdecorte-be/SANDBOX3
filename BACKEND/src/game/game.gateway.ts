@@ -7,28 +7,35 @@ import {
 import { Socket } from 'socket.io';
 import { Gaming } from '../Canvas';
 import { LobbyManager } from '../lobby/lobby';
+import {UseGuards} from "@nestjs/common";
+import { JwtAuthenticationGuard, LocalAuthGuard } from '../authentication/authentication.guard';
 
 @WebSocketGateway(3002, { cors: { origin: true, credentials: true } })
 export class GameGateway {
     //gameInstance = new Gaming(1000, 1000);
     LobbyManager = new LobbyManager();
     PlayerConnected = [];
-    @SubscribeMessage('events')
-    handleEvent(
-        @MessageBody() data: string,
-        @ConnectedSocket() client: Socket,
-    ): any {
+    // @UseGuards(JwtAuthenticationGuard)
+    // @SubscribeMessage('events')
+    // handleEvent(
+    //     @MessageBody() data: string,
+    //     @ConnectedSocket() client: Socket,
+    // ): any {
+    //
+    //     this.LobbyManager.createLobby();
+    //     //this.LobbyManager.getLobbyInstance('0').rendering(client);
+    //     //return this.LobbyManager.getLobbyInstance('0').Info;
+    // }
 
-        this.LobbyManager.createLobby();
-        //this.LobbyManager.getLobbyInstance('0').rendering(client);
-        //return this.LobbyManager.getLobbyInstance('0').Info;
+    afterInit(server: any) {
+        console.log('Game server initialized');
     }
-    @SubscribeMessage('connection')
+
     handleConnection(
         @MessageBody() data: string,
         @ConnectedSocket() client: Socket,
     ): any {
-        console.log('Player connected');
+        console.log('Player connected !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
     }
 
     @SubscribeMessage('CreateLobby')
@@ -46,8 +53,8 @@ export class GameGateway {
         @MessageBody() data: string,
         @ConnectedSocket() client: Socket,
     ): any {
-        console.log('Player joining lobby');
-        this.LobbyManager.JoinLobby('0');
+        console.log('Player joining lobby', data);
+        this.LobbyManager.JoinLobby(data);
     }
 
     @SubscribeMessage('LeaveLobby')
@@ -59,7 +66,6 @@ export class GameGateway {
         this.LobbyManager.LeaveLobby('0');
     }
 
-    @SubscribeMessage('disconnect')
     handleDisconnect(
         @MessageBody() data: string,
         @ConnectedSocket() client: Socket,

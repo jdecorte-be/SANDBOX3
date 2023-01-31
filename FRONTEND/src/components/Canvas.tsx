@@ -85,16 +85,16 @@ export class gameInfo{
 
 export class Gaming{
     Info:gameInfo;
-    socket = io("http://localhost:3002");
+    socket:any;
 
     constructor(width: number, height: number)
     {
         this.Info = new gameInfo(width, height);
     }
+    socketInit = () => {
+        this.socket = io('http://localhost:3002');
+    }
     Draw = () => {
-        this.socket.emit('events', {name: 'TEST'}, (data:gameInfo) => {
-            this.Info.copy(data);
-        });
         ResetBall();
         DrawScore(canvas.width / 4, canvas.height / 4, '#ffffff', this.Info.Player1.score.toString());
         DrawScore(3 * canvas.width / 4, canvas.height / 4, '#ffffff',this.Info.Player2.score.toString());
@@ -104,10 +104,6 @@ export class Gaming{
     }
     Canvas = () => {
         console.log('SHEESH')
-        this.socket.emit('events', (data:gameInfo) => {
-            //console.log('test');
-            this.Info.copy(data);
-        });
         const canvasRef = useRef<HTMLCanvasElement>(null);
         useEffect(() => {
             if (canvasRef.current) {
