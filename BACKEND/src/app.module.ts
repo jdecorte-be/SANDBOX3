@@ -6,9 +6,7 @@ import { UsersModule } from './users/users.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { configValidationSchema } from './app.schemas';
 import { AuthenticationModule } from './authentication/authentication.module';
-import { DbfilesController } from './dbfiles/dbfiles.controller';
-import { DbfilesModule } from './dbfiles/dbfiles.module';
-import { GameGateway} from "./game/game.gateway";
+import { GameGateway } from './game/game.gateway';
 
 @Module({
   imports: [
@@ -35,9 +33,9 @@ import { GameGateway} from "./game/game.gateway";
         };
       },
     }),
-    DbfilesModule,
   ],
-  controllers: [AppController, DbfilesController],
-  providers: [AppService, GameGateway],
+  controllers: [AppController],
+  providers: [AppService],
+  //providers: [AppService, GameGateway],
 })
 export class AppModule {}

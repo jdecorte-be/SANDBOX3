@@ -8,7 +8,9 @@ import {
   Req,
   Request,
   Res,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { Cache } from 'cache-manager';
 import {
@@ -21,12 +23,13 @@ import { codeDto, loginDto, SignDto } from 'src/users/users.dto';
 import { UsersService } from 'src/users/users.service';
 import { RequestWithUser } from './authentication.interfaces';
 import { TFAService } from './twilio.service';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('auth')
 export class AuthenticationController {
   constructor(
     private readonly authService: AuthenticationService,
-    private readonly userService: UsersService,
+    private readonly usersService: UsersService,
     private readonly tfaService: TFAService,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {}
@@ -47,8 +50,6 @@ export class AuthenticationController {
     return req.user;
   }
 
-
-
   @UseGuards(LocalAuthGuard)
   @Get()
   auth() {
@@ -56,32 +57,42 @@ export class AuthenticationController {
   }
 
   @Get('redirect')
-  redirect(@Req() req: Request, @Res() res: ExpressResponse) {
+  redirect(@Req() req: ExpressRequest, @Res() res: ExpressResponse) {
     console.log(`authentication.controller: redirect(signin) ---> SUCCESS`);
     return res.redirect('http://localhost:3000');
   }
 
+  @UseInterceptors(FileInterceptor('file'))
+  @Post('file')
+  uploadFile(@UploadedFile() f: Express.Multer.File) {
+    console.log('meta--->', f);
+  }
+
+  @Post('data')
+  File(@Req() req: ExpressRequest) {
+    console.log('raw--->', req.body);
+  }
+
   @Post('signup')
+  @UseInterceptors(FileInterceptor('file'))
   async signup(@Res() res: ExpressResponse, @Body() user: SignDto) {
     const newUser = await this.authService.signUp(user);
     if (newUser) {
       console.log(
         `authentication.controller: signUp(${newUser.login}) ---> SUCCESS`,
       );
-      return res.redirect('http://localhost:3000');
+      return res.send(newUser);
     }
-    console.log(
-      `authentication.controller: signUp(${newUser.login}) ---> FAIL`,
-    );
-    return res.send(newUser);
+    console.log(`authentication.controller: signUp(${user.login}) ---> FAIL`);
+    return res.status(401);
   }
 
   @Post('signin')
   async signIn(@Res() res: ExpressResponse, @Body() body: loginDto) {
-    const foundUser = await this.userService.findOneByLogin(body.login);
+    const foundUser = await this.usersService.findOneByLogin(body.login);
     if (foundUser) {
-      const { phoneNumber } = foundUser;
-      const code = Math.floor(1000 + Math.random() * 9000);
+      //const { phoneNumber } = foundUser;
+      //const code = Math.floor(1000 + Math.random() * 9000);
       // await this.tfaService.sendSms(
       //   phoneNumber,
       //   `Your verification code is: ${code}`,
@@ -90,7 +101,7 @@ export class AuthenticationController {
       //console.log(`authentication.controller: signin(${body}) ---> SUCCESS`);
       const cookie = await this.authService.login(body);
       res.setHeader('Set-Cookie', cookie);
-      console.log('cookie --> ',cookie);
+      console.log('cookie --> ', cookie);
       return res.send(cookie);
     }
     console.log(`authentication.controller: signin(${body}) ---> FAIL`);
@@ -110,7 +121,6 @@ export class AuthenticationController {
     }
     return req.user;
   }
-
 
   @UseGuards(JwtAuthenticationGuard)
   @Get('signout')

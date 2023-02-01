@@ -10,9 +10,15 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { TwilioModule } from 'nestjs-twilio';
 import { TFAService } from './twilio.service';
+import { MulterModule } from '@nestjs/platform-express';
 
 @Module({
   imports: [
+    MulterModule.registerAsync({
+      useFactory: () => ({
+        dest: './upload',
+      }),
+    }),
     UsersModule,
     PassportModule,
     ConfigModule,

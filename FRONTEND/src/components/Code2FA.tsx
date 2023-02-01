@@ -9,7 +9,7 @@ export const Code2FA = () => {
     const formData = new FormData(event.currentTarget);
     const form = {
       code: formData.get('code'),
-	  login: localStorage.getItem('currentUser'),
+      login: localStorage.getItem('currentUser'),
     };
     axios
       .post('http://localhost:3001/app/auth/code', form, {

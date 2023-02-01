@@ -1,12 +1,5 @@
 import { Exclude } from 'class-transformer';
-import Dbfiles from 'src/dbfiles/dbfiles.entity';
-import {
-  Entity,
-  Column,
-  PrimaryGeneratedColumn,
-  JoinColumn,
-  OneToOne,
-} from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class User {
@@ -26,12 +19,12 @@ export class User {
   @Column({ default: false, nullable: true })
   public isActive: boolean;
 
-  @JoinColumn({ name: 'avatarId' })
-  @OneToOne(() => Dbfiles, {
-    nullable: true,
-  })
-  public avatar: Dbfiles;
-
   @Column({ nullable: true })
-  public avatarId: number;
+  filename: string;
+
+  @Column({
+    nullable: true,
+    type: 'bytea',
+  })
+  avatar: Uint8Array;
 }

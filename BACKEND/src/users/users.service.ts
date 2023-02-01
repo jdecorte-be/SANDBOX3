@@ -12,6 +12,20 @@ export class UsersService {
     private userRepository: Repository<User>,
   ) {}
 
+  async uploadFile(id: number, dataBuffer: Buffer, filename: string) {
+    const user = await this.getById(id);
+    await this.userRepository.update(id, {
+      filename: filename,
+      avatar: dataBuffer,
+    });
+    return user;
+  }
+
+  // async addAvatar(userId: number, imageBuffer: Buffer, filename: string) {
+  //   const avatar = await this.uploadFile(userId, imageBuffer, filename);
+  //   return avatar;
+  // }
+
   async findOneByLogin(login: string): Promise<User | null> {
     console.log(`users.service: findOneByLogin(${login})`);
     const result = await this.userRepository.findOneBy({ login });
@@ -22,17 +36,17 @@ export class UsersService {
   async getById(id: number): Promise<any> {
     console.log(`users.service: getByid(${id})`);
     const result = await this.userRepository.findOneBy({ id });
-    return result;
+    if (result) return result;
   }
 
-  displayAll() {
+  async displayAll() {
     console.log(`users.service: displayAll(userRepository)`);
-    return this.userRepository.find();
+    return await this.userRepository.find();
   }
 
-  clear() {
+  async clear() {
     console.log(`users.service: clear(userRepository)`);
-    return this.userRepository.clear();
+    return await this.userRepository.clear();
   }
 
   async signUp(user: SignDto): Promise<User | null> {

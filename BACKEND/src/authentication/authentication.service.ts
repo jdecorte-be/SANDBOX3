@@ -46,7 +46,7 @@ export class AuthenticationService {
     return `Bearer ${this.jwtService.sign(payload)}`;
   }
 
-  async signUp(user: SignDto): Promise<any> {
+  async signUp(user: SignDto): Promise<User | null> {
     return this.usersService.signUp(user);
   }
 

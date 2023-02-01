@@ -9,18 +9,18 @@ export const SignUp = () => {
   const handleSubmit = async (event: any) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
+    const imgData = formData.get('file') as File;
+    formData.append('file', imgData);
+    console.log(imgData);
     const form = {
       login: formData.get('login'),
       password: formData.get('password'),
       phoneNumber: formData.get('tel'),
     };
     axios
-      .post('http://localhost:3001/app/auth/signup', form, {
-        headers: {},
-      })
+      .post('http://localhost:3001/app/users/upload', form)
       .then((response) => {
-        document.cookie = response.data.Authorization;
-        console.log(response.data.Authorization);
+        console.log(response);
       })
       .catch((error) => {
         console.log(error);
