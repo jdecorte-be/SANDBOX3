@@ -18,7 +18,7 @@ export const SignUp = () => {
       phoneNumber: formData.get('tel'),
     };
     axios
-      .post('http://localhost:3001/app/users/upload', form)
+      .post('http://localhost:3001/app/auth/signup', form)
       .then((response) => {
         console.log(response);
       })

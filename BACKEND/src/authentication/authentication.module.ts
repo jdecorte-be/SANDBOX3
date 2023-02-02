@@ -14,10 +14,8 @@ import { MulterModule } from '@nestjs/platform-express';
 
 @Module({
   imports: [
-    MulterModule.registerAsync({
-      useFactory: () => ({
+    MulterModule.register({
         dest: './upload',
-      }),
     }),
     UsersModule,
     PassportModule,

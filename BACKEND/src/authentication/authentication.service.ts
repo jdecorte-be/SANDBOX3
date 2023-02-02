@@ -5,6 +5,7 @@ import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { User } from 'src/users/users.entity';
 import { TokenPayload } from './authentication.interfaces';
+import * as jwt from 'jsonwebtoken';
 
 @Injectable()
 export class AuthenticationService {
@@ -42,8 +43,11 @@ export class AuthenticationService {
 
   async login(user: any) {
     console.log(`login ${user}`);
-    const payload = { login: user.login, sub: user.id };
-    return `Bearer ${this.jwtService.sign(payload)}`;
+    const payload = {  sub: user.id, name: user.login, iat: new Date().getSeconds()};
+    const secret = this.configService.get('JWT_SECRET') as string;
+    return `Bearer ${jwt.sign(payload, Buffer.from(secret, 'base64'), {
+      algorithm: 'HS256',
+    })}`;
   }
 
   async signUp(user: SignDto): Promise<User | null> {
