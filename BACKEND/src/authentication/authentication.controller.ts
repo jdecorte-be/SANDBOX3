@@ -87,10 +87,11 @@ export class AuthenticationController {
       //   `Your verification code is: ${code}`,
       // );
       // await this.addToCache(body.login, Number(code).toString());
-      //console.log(`authentication.controller: signin(${body}) ---> SUCCESS`);
+      //console.log(`authentication.controller: signin(${body}) ---> SUCCESS`);mais
       const cookie = await this.authService.login(body);
       res.setHeader('Set-Cookie', cookie);
       console.log('cookie --> ',cookie);
+      console.log('------------------------------------------');
       return res.send(cookie);
     }
     console.log(`authentication.controller: signin(${body}) ---> FAIL`);

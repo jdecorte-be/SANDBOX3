@@ -4,17 +4,42 @@ import {
     WebSocketGateway,
     ConnectedSocket,
 } from '@nestjs/websockets';
+import {
+    Body,
+    CACHE_MANAGER,
+    Controller,
+    Get,
+    Inject,
+    Post,
+    Req,
+    Request,
+    Res,
+    UseGuards,
+} from '@nestjs/common';
 import { Socket } from 'socket.io';
 import { Gaming } from '../Canvas';
 import { LobbyManager } from '../lobby/lobby';
-import {UseGuards} from "@nestjs/common";
 import { JwtAuthenticationGuard, LocalAuthGuard } from '../authentication/authentication.guard';
+import { AuthenticationService } from '../authentication/authentication.service'
+import { UsersService } from "../users/users.service";
+import { JwtService } from "@nestjs/jwt";
+import { JwtStrategy } from "../authentication/jwt.strategy";
+import { ConfigService } from "@nestjs/config";
 
 @WebSocketGateway(3002, { cors: { origin: true, credentials: true } })
 export class GameGateway {
+    constructor(
+        private readonly configService: ConfigService,
+        private readonly jwtService: JwtService,
+        private readonly authService: AuthenticationService,
+        private readonly userService: UsersService,
+        private readonly jwtStrategy: JwtStrategy,
+        PlayerConnected: any,
+
+    ) {
+    }
     //gameInstance = new Gaming(1000, 1000);
     LobbyManager = new LobbyManager();
-    PlayerConnected = [];
     // @UseGuards(JwtAuthenticationGuard)
     // @SubscribeMessage('events')
     // handleEvent(
@@ -30,12 +55,22 @@ export class GameGateway {
     afterInit(server: any) {
         console.log('Game server initialized');
     }
-
-    handleConnection(
-        @MessageBody() data: string,
-        @ConnectedSocket() client: Socket,
-    ): any {
-        console.log('Player connected !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
+    @UseGuards(JwtAuthenticationGuard)
+    async handleConnection(client: Socket, ){
+        console.log('Player connected !');
+        if (!client || client === undefined) {
+            console.log('No client provided');
+        }
+        if (client.handshake.headers.authorization === undefined || !client.handshake.headers.authorization) {
+            console.log('No token provided');
+            client.disconnect();
+            return;
+        }
+        const token = client.handshake.headers.authorization.split(' ')[1];
+        const secret = this.configService.get('JWT_SECRET')
+        const info = this.jwtService.verify(token, { secret: secret });
+        client.data.username = info.login;
+        console.log('Token provided');
     }
 
     @SubscribeMessage('CreateLobby')
@@ -53,8 +88,8 @@ export class GameGateway {
         @MessageBody() data: string,
         @ConnectedSocket() client: Socket,
     ): any {
-        console.log('Player joining lobby', data);
-        this.LobbyManager.JoinLobby(data);
+        console.log('Player joining lobby', client.data.username);
+        this.LobbyManager.JoinLobby(client.data.username);
     }
 
     @SubscribeMessage('LeaveLobby')
@@ -62,8 +97,8 @@ export class GameGateway {
         @MessageBody() data: string,
         @ConnectedSocket() client: Socket,
     ): any {
-        console.log('Player leaving lobby');
-        this.LobbyManager.LeaveLobby('0');
+        this.LobbyManager.LeaveLobby(client.data.username);
+
     }
 
     handleDisconnect(
@@ -75,12 +110,16 @@ export class GameGateway {
         this.LobbyManager.printLobby();
         //this.LobbyManager.getLobbyInstance('0').Info.Connected[0] = "";
     }
+
     @SubscribeMessage('LobbyInfo')
     handleLobbyInfo(
         @MessageBody() data: string,
         @ConnectedSocket() client: Socket,
     ): any {
-        console.log('Player asking for lobby info');
+        if (!client || client === undefined)
+            console.log('AH');
+        console.log(client.handshake.headers.authorization)
+        console.log(`${client.data.username}' - asking for lobby info`);
         this.LobbyManager.printLobby();
     }
 

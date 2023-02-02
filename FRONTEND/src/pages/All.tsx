@@ -5,7 +5,7 @@ import {Gaming} from "../components/Canvas";
 export var game = new Gaming(1000, 1000);
 
 const MovePage = () => {
-    //game.socketInit();
+    game.socketInit();
     return (
         <div>
             <Link to="/" className="btn btn-primary">Home</Link><div/>

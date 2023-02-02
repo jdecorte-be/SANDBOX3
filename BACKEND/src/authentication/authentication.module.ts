@@ -10,6 +10,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { TwilioModule } from 'nestjs-twilio';
 import { TFAService } from './twilio.service';
+import { GameGateway} from "../game/game.gateway";
 
 @Module({
   imports: [
@@ -41,7 +42,7 @@ import { TFAService } from './twilio.service';
     LocalStrategy,
     JwtStrategy,
     SessionSerializer,
-    TFAService,
+    TFAService
   ],
   exports: [AuthenticationService],
   controllers: [AuthenticationController],

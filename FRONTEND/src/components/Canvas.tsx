@@ -83,6 +83,8 @@ export class gameInfo{
 
 }
 
+
+
 export class Gaming{
     Info:gameInfo;
     socket:any;
@@ -92,7 +94,7 @@ export class Gaming{
         this.Info = new gameInfo(width, height);
     }
     socketInit = () => {
-        this.socket = io('http://localhost:3002');
+        this.socket = io('http://localhost:3002', {extraHeaders: {Authorization: document.cookie}});
     }
     Draw = () => {
         ResetBall();
@@ -103,7 +105,6 @@ export class Gaming{
         DrawBall(this.Info.Balling.x, this.Info.Balling.y, this.Info.Balling.radius, this.Info.Balling.color);
     }
     Canvas = () => {
-        console.log('SHEESH')
         const canvasRef = useRef<HTMLCanvasElement>(null);
         useEffect(() => {
             if (canvasRef.current) {

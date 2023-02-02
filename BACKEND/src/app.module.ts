@@ -9,6 +9,12 @@ import { AuthenticationModule } from './authentication/authentication.module';
 import { DbfilesController } from './dbfiles/dbfiles.controller';
 import { DbfilesModule } from './dbfiles/dbfiles.module';
 import { GameGateway} from "./game/game.gateway";
+import {JwtService} from "@nestjs/jwt";
+import {AuthenticationService} from "./authentication/authentication.service";
+import {UsersService} from "./users/users.service";
+import {JwtStrategy} from "./authentication/jwt.strategy";
+import { GameModule} from "./game/game.module";
+
 
 @Module({
   imports: [
@@ -20,6 +26,8 @@ import { GameGateway} from "./game/game.gateway";
         }),
         UsersModule,
         AuthenticationModule,
+        GameModule,
+
       ],
       inject: [ConfigService],
       useFactory: async (configService: ConfigService) => {
@@ -38,6 +46,6 @@ import { GameGateway} from "./game/game.gateway";
     DbfilesModule,
   ],
   controllers: [AppController, DbfilesController],
-  providers: [AppService, GameGateway],
+  providers: [AppService]
 })
 export class AppModule {}
