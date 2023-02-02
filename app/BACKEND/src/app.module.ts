@@ -9,9 +9,17 @@ import { AuthenticationModule } from './authentication/authentication.module';
 import { DbfilesController } from './dbfiles/dbfiles.controller';
 import { DbfilesModule } from './dbfiles/dbfiles.module';
 import { GatewayModule } from './gateway/gateway.module';
+import { ChatsModule } from './chats/chats.module';
+import { GraphQLModule } from '@nestjs/graphql';
+import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 
 @Module({
   imports: [
+    GraphQLModule.forRoot<ApolloDriverConfig>({
+      driver: ApolloDriver,
+      installSubscriptionHandlers: true,
+      autoSchemaFile: 'schema.gql',
+    }),
     TypeOrmModule.forRootAsync({
       imports: [
         ConfigModule.forRoot({
@@ -37,6 +45,7 @@ import { GatewayModule } from './gateway/gateway.module';
     }),
     DbfilesModule,
     GatewayModule,
+    ChatsModule,
   ],
   controllers: [AppController, DbfilesController],
   providers: [AppService],
