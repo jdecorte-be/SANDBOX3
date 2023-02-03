@@ -20,13 +20,11 @@ import { JwtAuthenticationGuard, LocalAuthGuard } from './authentication.guard';
 import { AuthenticationService } from './authentication.service';
 import { codeDto, loginDto, SignDto } from 'src/users/users.dto';
 import { UsersService } from 'src/users/users.service';
-import { RequestWithUser } from './authentication.interfaces';
 import { TFAService } from './twilio.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import * as multer from 'multer';
 
 const storage = multer.memoryStorage();
-//const upload = multer({ storage: storage });
 
 @Controller('auth')
 export class AuthenticationController {
@@ -67,45 +65,25 @@ export class AuthenticationController {
 
   @Post('data')
   @UseInterceptors(FileInterceptor('file', { storage }))
-  getFileBody(
-    @Req() req: ExpressRequest,
-  ) {
-    console.log(
-      'currentuserId ---> ',
-      typeof req.body.user,
-      '<=>',
-      req.body.user,
-    );
-    console.log(
-      'fieldname ---> ',
-      typeof req.file?.fieldname,
-      '<=>',
-      req.file?.fieldname,
-    );
-    console.log(
-      'originalname ---> ',
-      typeof req.file?.originalname,
-      '<=>',
-      req.file?.originalname,
-    );
-    console.log(
-      'mimetype ---> ',
-      typeof req.file?.mimetype,
-      '<=>',
-      req.file?.mimetype,
-    );
-    console.log(
-      'buffer ---> ',
-      typeof req.file?.buffer,
-      '<=>',
-      req.file?.buffer,
-    );
-    console.log('size ---> ', typeof req.file?.size, '<=>', req.file?.size);
+  async getFile(@Req() req: ExpressRequest) {
+    if (req.file && req.body.user) {
+      const user = await this.usersService.uploadFile(
+        req.body?.user,
+        req.file?.buffer,
+        req.file?.originalname,
+        req.file?.mimetype,
+        req.file?.size,
+      );
+      if (user) {
+        return user;
+      }
+      return null;
+    }
   }
 
   @Post('signup')
   async signup(@Res() res: ExpressResponse, @Body() user: SignDto) {
-    const newUser = await this.authService.signUp(user);
+    const newUser = await this.usersService.signUp(user);
     if (newUser) {
       console.log(
         `authentication.controller: signUp(${newUser.login}) ---> SUCCESS`,
@@ -129,12 +107,6 @@ export class AuthenticationController {
       // await this.addToCache(body.login, Number(code).toString());
       //console.log(`authentication.controller: signin(${body}) ---> SUCCESS`);
       const cookie = await this.authService.login(body);
-      //console.log(cookie.split(' ')[1]);
-      //const secret = this.configService.get('JWT_SECRET') as string;
-      //console.log(
-      //  'cookie --> ',
-      //  this.jwtService.verify(cookie.split(' ')[1], { secret: secret }),
-      //  );
       return res.send({ foundUser, cookie });
     }
     console.log(`authentication.controller: signin(${body}) ---> FAIL`);
@@ -157,7 +129,7 @@ export class AuthenticationController {
 
   @UseGuards(JwtAuthenticationGuard)
   @Get('signout')
-  logout(@Req() req: RequestWithUser, @Res() res: ExpressResponse) {
+  logout(@Req() req: ExpressRequest, @Res() res: ExpressResponse) {
     const { user } = req;
     res.setHeader('Set-Cookie', '');
     console.log(`authentication.controller: signout(${user})`);

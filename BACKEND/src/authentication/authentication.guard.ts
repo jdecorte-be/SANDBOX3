@@ -13,6 +13,3 @@ export class LocalAuthGuard extends AuthGuard('oauth2') {
 
 @Injectable()
 export class JwtAuthenticationGuard extends AuthGuard('jwt') {}
-
-@Injectable()
-export class TestAuthGuard extends AuthGuard('local') {}

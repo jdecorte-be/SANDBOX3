@@ -14,38 +14,41 @@ export class UsersService {
 
   async uploadFile(
     id: number,
-    dataBuffer: Buffer,
+    buffer: Buffer,
     filename: string,
+    type: string,
+    size: number,
   ): Promise<User | null> {
-    console.log(id, filename, dataBuffer);
-    const user: User = await this.getById(id);
+    console.log(`users.service: uploadFile(${filename})`);
+    if (size <= 0 || size > 100000) {
+      console.log('invalid file size');
+      return null;
+    } else if (!['image/png', 'image/jpeg'].includes(type)) {
+      console.log('invalid file type');
+      return null;
+    }
+    const user = await this.getById(id);
     if (user) {
       user.filename = filename;
-      user.avatar = dataBuffer;
-      //console.log('user--->', user);
+      user.avatar = buffer;
       const res = await this.userRepository.save(user);
-      //console.log('res--->', res);
-      return user;
+      return res;
     }
     return null;
   }
 
-  // async addAvatar(userId: number, imageBuffer: Buffer, filename: string) {
-  //   const avatar = await this.uploadFile(userId, imageBuffer, filename);
-  //   return avatar;
-  // }
-
   async findOneByLogin(login: string): Promise<User | null> {
     console.log(`users.service: findOneByLogin(${login})`);
     const result = await this.userRepository.findOneBy({ login });
-    console.log(result);
-    return result;
+    if (result) return result;
+    return null;
   }
 
-  async getById(id: number): Promise<any> {
+  async getById(id: number): Promise<User | null> {
     console.log(`users.service: getByid(${id})`);
     const result = await this.userRepository.findOneBy({ id });
     if (result) return result;
+    return null;
   }
 
   async displayAll() {
@@ -87,6 +90,6 @@ export class UsersService {
         return foundUser;
       }
     }
-    return foundUser;
+    return null;
   }
 }
