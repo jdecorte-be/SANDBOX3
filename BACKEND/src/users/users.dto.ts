@@ -42,3 +42,9 @@ export class codeDto {
   @MaxLength(4)
   code: string;
 }
+
+export class imgDto {
+  file: File;
+  filename: string;
+  type: string;
+}

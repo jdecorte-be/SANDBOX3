@@ -12,13 +12,22 @@ export class UsersService {
     private userRepository: Repository<User>,
   ) {}
 
-  async uploadFile(id: number, dataBuffer: Buffer, filename: string) {
-    const user = await this.getById(id);
-    await this.userRepository.update(id, {
-      filename: filename,
-      avatar: dataBuffer,
-    });
-    return user;
+  async uploadFile(
+    id: number,
+    dataBuffer: Buffer,
+    filename: string,
+  ): Promise<User | null> {
+    console.log(id, filename, dataBuffer);
+    const user: User = await this.getById(id);
+    if (user) {
+      user.filename = filename;
+      user.avatar = dataBuffer;
+      //console.log('user--->', user);
+      const res = await this.userRepository.save(user);
+      //console.log('res--->', res);
+      return user;
+    }
+    return null;
   }
 
   // async addAvatar(userId: number, imageBuffer: Buffer, filename: string) {

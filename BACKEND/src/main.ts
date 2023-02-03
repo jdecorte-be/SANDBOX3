@@ -5,6 +5,8 @@ import { ConfigService } from '@nestjs/config';
 import * as cookieParser from 'cookie-parser';
 import * as session from 'express-session';
 import { ValidationPipe } from '@nestjs/common';
+import * as fileupload from 'express-fileupload';
+import * as express from 'express';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);

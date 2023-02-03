@@ -17,9 +17,10 @@ export const SignIn = () => {
         headers: {},
       })
       .then((response) => {
-        document.cookie = response.data;
-        console.log('token = ', response.data);
-        sessionStorage.setItem('currentUser', login);
+        console.log('+++', response.data.foundUser);
+        console.log('token = ', response.data.cookie);
+        sessionStorage.setItem('currentUser', response.data.foundUser.id);
+        console.log('---->', sessionStorage.getItem('currentUser'));
       })
       .catch((error) => {
         console.log(error);

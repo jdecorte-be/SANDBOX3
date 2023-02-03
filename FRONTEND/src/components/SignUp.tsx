@@ -9,9 +9,6 @@ export const SignUp = () => {
   const handleSubmit = async (event: any) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
-    const imgData = formData.get('file') as File;
-    formData.append('file', imgData);
-    console.log(imgData);
     const form = {
       login: formData.get('login'),
       password: formData.get('password'),

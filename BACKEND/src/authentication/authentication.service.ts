@@ -43,7 +43,11 @@ export class AuthenticationService {
 
   async login(user: any) {
     console.log(`login ${user}`);
-    const payload = {  sub: user.id, name: user.login, iat: new Date().getSeconds()};
+    const payload = {
+      sub: user.id,
+      name: user.login,
+      iat: new Date().getSeconds(),
+    };
     const secret = this.configService.get('JWT_SECRET') as string;
     return `Bearer ${jwt.sign(payload, Buffer.from(secret, 'base64'), {
       algorithm: 'HS256',
