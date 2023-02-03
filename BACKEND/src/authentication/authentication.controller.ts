@@ -23,6 +23,7 @@ import { UsersService } from 'src/users/users.service';
 import { TFAService } from './twilio.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import * as multer from 'multer';
+import { User } from 'src/users/users.entity';
 
 const storage = multer.memoryStorage();
 
@@ -65,8 +66,16 @@ export class AuthenticationController {
 
   @Post('data')
   @UseInterceptors(FileInterceptor('file', { storage }))
-  async getFile(@Req() req: ExpressRequest) {
+  async getFile(@Req() req: ExpressRequest, @Res() res: ExpressResponse) {
     if (req.file && req.body.user) {
+      if (!['image/png', 'image/jpeg'].includes(req.file?.mimetype)) {
+        console.log('invalid file type');
+        return null;
+      }
+      if (req.file?.size > 100000) {
+        console.log('invalid file size');
+        return null;
+      }
       const user = await this.usersService.uploadFile(
         req.body?.user,
         req.file?.buffer,
@@ -83,15 +92,10 @@ export class AuthenticationController {
 
   @Post('signup')
   async signup(@Res() res: ExpressResponse, @Body() user: SignDto) {
-    const newUser = await this.usersService.signUp(user);
-    if (newUser) {
-      console.log(
-        `authentication.controller: signUp(${newUser.login}) ---> SUCCESS`,
-      );
-      return res.send(newUser);
-    }
-    console.log(`authentication.controller: signUp(${user.login}) ---> FAIL`);
-    return res.status(401);
+    const result = await this.usersService.signUp(user).catch((err) => {
+      return res.status(400).send(err);
+    });
+    if (result) return res.status(200).send(result);
   }
 
   @Post('signin')
@@ -105,11 +109,9 @@ export class AuthenticationController {
       //   `Your verification code is: ${code}`,
       // );
       // await this.addToCache(body.login, Number(code).toString());
-      //console.log(`authentication.controller: signin(${body}) ---> SUCCESS`);
       const cookie = await this.authService.login(body);
       return res.send({ foundUser, cookie });
     }
-    console.log(`authentication.controller: signin(${body}) ---> FAIL`);
     return res.status(401);
   }
 
@@ -125,14 +127,5 @@ export class AuthenticationController {
       return res.status(401);
     }
     return req.user;
-  }
-
-  @UseGuards(JwtAuthenticationGuard)
-  @Get('signout')
-  logout(@Req() req: ExpressRequest, @Res() res: ExpressResponse) {
-    const { user } = req;
-    res.setHeader('Set-Cookie', '');
-    console.log(`authentication.controller: signout(${user})`);
-    return res.redirect('http://localhost:3000/signin');
   }
 }

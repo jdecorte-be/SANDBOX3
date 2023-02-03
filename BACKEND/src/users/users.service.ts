@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './users.entity';
@@ -12,6 +12,16 @@ export class UsersService {
     private userRepository: Repository<User>,
   ) {}
 
+  async displayAll() {
+    console.log(`users.service: displayAll(userRepository)`);
+    return await this.userRepository.find();
+  }
+
+  async clear() {
+    console.log(`users.service: clear(userRepository)`);
+    return await this.userRepository.clear();
+  }
+
   async uploadFile(
     id: number,
     buffer: Buffer,
@@ -19,22 +29,16 @@ export class UsersService {
     type: string,
     size: number,
   ): Promise<User | null> {
-    console.log(`users.service: uploadFile(${filename})`);
-    if (size <= 0 || size > 100000) {
-      console.log('invalid file size');
-      return null;
-    } else if (!['image/png', 'image/jpeg'].includes(type)) {
-      console.log('invalid file type');
-      return null;
-    }
+    console.log(`users.service: uploadFile(${id} -> ${filename})`);
     const user = await this.getById(id);
     if (user) {
       user.filename = filename;
       user.avatar = buffer;
       const res = await this.userRepository.save(user);
       return res;
+    } else {
+      return null;
     }
-    return null;
   }
 
   async findOneByLogin(login: string): Promise<User | null> {
@@ -51,16 +55,6 @@ export class UsersService {
     return null;
   }
 
-  async displayAll() {
-    console.log(`users.service: displayAll(userRepository)`);
-    return await this.userRepository.find();
-  }
-
-  async clear() {
-    console.log(`users.service: clear(userRepository)`);
-    return await this.userRepository.clear();
-  }
-
   async signUp(user: SignDto): Promise<User | null> {
     console.log(`users.service: signUp(${user.login})`);
     const salt = bcrypt.genSaltSync();
@@ -70,7 +64,9 @@ export class UsersService {
       password: hash,
       phoneNumber: user.phoneNumber,
     };
-    const newUser = await this.userRepository.save(reqBody);
+    const newUser = await this.userRepository.save(reqBody).catch(() => {
+      return null;
+    });
     if (newUser) {
       return newUser;
     }

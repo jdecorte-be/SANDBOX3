@@ -13,7 +13,7 @@ export class User {
   @Exclude()
   password: string;
 
-  @Column()
+  @Column({ unique: true })
   phoneNumber: string;
 
   @Column({ default: false, nullable: true })

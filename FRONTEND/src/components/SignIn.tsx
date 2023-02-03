@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { useState } from 'react';
 
-export const SignIn = () => {
+export const SignIn = ({ onSubmit }: { onSubmit: () => void }) => {
   const [login, setLogin] = useState('');
   const [password, setPassword] = useState('');
 
@@ -16,15 +16,14 @@ export const SignIn = () => {
       .post('http://localhost:3001/app/auth/signin', form, {
         headers: {},
       })
-      .then((response) => {
-        console.log('+++', response.data.foundUser);
-        console.log('token = ', response.data.cookie);
-        sessionStorage.setItem('currentUser', response.data.foundUser.id);
-        console.log('---->', sessionStorage.getItem('currentUser'));
+      .then((res) => {
+        sessionStorage.setItem('currentUser', res.data.foundUser.id);
+        console.log(res.data);
       })
-      .catch((error) => {
-        console.log(error);
+      .catch((err) => {
+        console.log(err);
       });
+      onSubmit();
   };
 
   return (

@@ -1,12 +1,10 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import * as passport from 'passport';
 import { ConfigService } from '@nestjs/config';
+import { ValidationPipe } from '@nestjs/common';
+import * as passport from 'passport';
 import * as cookieParser from 'cookie-parser';
 import * as session from 'express-session';
-import { ValidationPipe } from '@nestjs/common';
-import * as fileupload from 'express-fileupload';
-import * as express from 'express';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -33,5 +31,6 @@ async function bootstrap() {
     optionsSuccessStatus: 200,
   });
   await app.listen(PORT);
+  console.log(`App listening on port: ${PORT}`)
 }
 bootstrap();

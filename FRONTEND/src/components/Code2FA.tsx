@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { useState } from 'react';
 
-export const Code2FA = () => {
+export const Code2FA = ({ onSubmit }: { onSubmit: () => void }) => {
   const [code, setCode] = useState('');
 
   const handleSubmit = async (event: any) => {
@@ -15,12 +15,13 @@ export const Code2FA = () => {
       .post('http://localhost:3001/app/auth/code', form, {
         headers: { Authorization: document.cookie },
       })
-      .then((response) => {
-        console.log(response);
+      .then((res) => {
+        console.log(res);
       })
-      .catch((error) => {
-        console.log(error);
+      .catch((err) => {
+        console.log(err);
       });
+      onSubmit();
   };
 
   return (

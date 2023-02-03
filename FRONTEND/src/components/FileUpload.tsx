@@ -1,7 +1,7 @@
+import axios from 'axios';
 import React, { useState, ChangeEvent } from 'react';
-import axios, { AxiosResponse } from 'axios';
 
-export const FileUpload: React.FC = () => {
+export const FileUpload = ({ onSubmit }: { onSubmit: () => void }) => {
   const [file, setFile] = useState<File | null>(undefined);
   const [res, setRes] = useState<any>();
 
@@ -32,7 +32,12 @@ export const FileUpload: React.FC = () => {
         base64FileURL(file, (obj) => {
           setRes(obj);
         });
+        console.log(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
       });
+      onSubmit();
   };
 
   return (

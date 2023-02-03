@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import axios from 'axios';
 
-export const SignUp = () => {
+export const SignUp = ({ onSubmit }: { onSubmit: () => void }) => {
   const [login, setLogin] = useState('');
   const [password, setPassword] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
@@ -16,11 +16,13 @@ export const SignUp = () => {
     };
     axios
       .post('http://localhost:3001/app/auth/signup', form)
-      .then((response) => {
-        console.log(response);
+      .then((res) => {
+        //console.log(res.data);
+        if (res.data.status !== 400)
+          onSubmit();
       })
-      .catch((error) => {
-        console.log(error);
+      .catch((err) => {
+        //console.log(err);
       });
   };
 
@@ -55,7 +57,9 @@ export const SignUp = () => {
             value={phoneNumber}
             onChange={(e) => setPhoneNumber(e.target.value)}
           />
-          <button type="submit">SUBMIT</button>
+          <button type="submit">
+            SUBMIT
+          </button>
         </form>
       </div>
     </div>
