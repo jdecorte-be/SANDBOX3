@@ -3,7 +3,6 @@ import io from 'socket.io-client';
 import { Socket } from 'socket.io';
 
 let canvas: any;
-let running = false;
 let context: any;
 
 class Player
@@ -67,8 +66,11 @@ export class gameInfo {
     Player1: Player;
     Player2: Player;
     Connected : [string, string];
+    Running: boolean;
     CDimension: { width: number; height: number };
+
     constructor(widths: number, heights: number) {
+        this.Running = false;
         this.Connected = ["", ""];
         this.CDimension = { width: widths, height: heights };
         this.Balling = new Ball(widths, heights, 10, 10, 5, 0, 'red');
@@ -86,7 +88,7 @@ export class gameInfo {
         if (this.Connected[1] === id)
             return this.Player2;
         if (this.Connected[0] !== id && this.Connected[1] !== id)
-            throw new Error("Too many players");
+            return;
         else
             return this.Player1;
     }
@@ -108,18 +110,19 @@ export class Gaming {
 
     rendering(Client:Socket) {
 
-        if (running)
+        console.log("Rendering...");
+        if (this.Info.Running === true)
             return;
         if (this.Info.Connected[0] !== "" && this.Info.Connected[1] !== "")
         {
-            running = true;
+            this.Info.Running = true;
             this.intID = setInterval(() => {
                 this.UpdateBall();
             }, 1000 / 60);
         }
         else if (this.intID !== -1){
             clearInterval(this.intID);
-            running = false;
+            this.Info.Running = false;
         }
         else
             return this.intID = -1;

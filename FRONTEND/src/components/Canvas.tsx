@@ -80,23 +80,22 @@ export class gameInfo{
         this.Player2 = other.Player2;
         this.CDimension = {width: other.CDimension.width, height: other.CDimension.height};
     }
-
 }
-
-
 
 export class Gaming{
     Info:gameInfo;
     socket:any;
 
-    constructor(width: number, height: number)
-    {
+    constructor(width: number, height: number) {
         this.Info = new gameInfo(width, height);
     }
     socketInit = () => {
         this.socket = io('http://localhost:3002', {extraHeaders: {Authorization: document.cookie}});
     }
     Draw = () => {
+            this.socket.emit('Ping', (data: gameInfo) => {
+                this.Info.copy(data);
+            });
         ResetBall();
         DrawScore(canvas.width / 4, canvas.height / 4, '#ffffff', this.Info.Player1.score.toString());
         DrawScore(3 * canvas.width / 4, canvas.height / 4, '#ffffff',this.Info.Player2.score.toString());

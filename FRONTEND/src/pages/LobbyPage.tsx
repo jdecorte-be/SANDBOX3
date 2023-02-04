@@ -1,8 +1,10 @@
 import { game } from "./All";
 import axios from "axios";
+import { useNavigate} from "react-router-dom";
 
 function LobbyPage() {
 
+    const Navigate = useNavigate();
     const click = () => {
         axios.get('http://localhost:3001/app/auth/who', {
             headers: { Authorization: document.cookie },
@@ -24,6 +26,13 @@ function LobbyPage() {
     const printLobby = () => {
         game.socket.emit('LobbyInfo');
     }
+
+    game.socket.on('Waiting Room', () => {
+        Navigate('/RoomWaiting');
+    });
+    game.socket.on('Ready', () => {
+        Navigate('/Game');
+    });
 
     return (
         <div>

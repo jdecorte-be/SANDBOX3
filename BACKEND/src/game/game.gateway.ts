@@ -73,6 +73,29 @@ export class GameGateway {
         console.log('Token provided');
     }
 
+    @SubscribeMessage('Ping')
+    handlePing(
+        @MessageBody() data: string,
+        @ConnectedSocket() client: Socket,
+    ): any {
+        if (this.LobbyManager.LobbyList.length === 0)
+            throw new Error('No lobby found');
+        return this.LobbyManager.getUserLobby(client.data.username).Instance.getInfo();
+    }
+    @SubscribeMessage('PlayerReady')
+    handlePlayerReady(
+        @MessageBody() data: string,
+        @ConnectedSocket() client: Socket,
+    ): any {
+        console.log(`${client.data.username} is ready to play`);
+        if (this.LobbyManager.isInLobby(client.data.username))
+            this.LobbyManager.getUserLobby(client.data.username).Ready.push(client.data.username);
+        if (this.LobbyManager.getUserLobby(client.data.username).Ready.length === 2) {
+            this.LobbyManager.getUserLobby(client.data.username).Instance.Info.Connected[0] = this.LobbyManager.getUserLobby(client.data.username).Ready[0];
+            this.LobbyManager.getUserLobby(client.data.username).Instance.Info.Connected[1] = this.LobbyManager.getUserLobby(client.data.username).Ready[1];
+            this.LobbyManager.getUserLobby(client.data.username).Instance.rendering(client);
+        }
+    }
     @SubscribeMessage('CreateLobby')
     handleCreateLobby(
         @MessageBody() data: string,
@@ -89,7 +112,7 @@ export class GameGateway {
         @ConnectedSocket() client: Socket,
     ): any {
         console.log('Player joining lobby', client.data.username);
-        this.LobbyManager.JoinLobby(client.data.username);
+        this.LobbyManager.JoinLobby(client.data.username, client);
     }
 
     @SubscribeMessage('LeaveLobby')
@@ -106,9 +129,6 @@ export class GameGateway {
         @ConnectedSocket() client: Socket,
     ): any {
         console.log('Player disconnected');
-        this.LobbyManager.LeaveLobby('0');
-        this.LobbyManager.printLobby();
-        //this.LobbyManager.getLobbyInstance('0').Info.Connected[0] = "";
     }
 
     @SubscribeMessage('LobbyInfo')
@@ -128,11 +148,7 @@ export class GameGateway {
         @MessageBody() data: string,
         @ConnectedSocket() client: Socket,
     ): any {
-        try {
-            //this.LobbyManager.getLobbyInstance('0').Info.CheckMove(client.id).PaddleUp();
-        } catch (e) {
-            console.log(e);
-        }
+        this.LobbyManager.getUserLobby(client.data.username)?.Instance.Info.CheckMove(client.data.username)?.PaddleUp();
     }
 
     @SubscribeMessage('PaddleDown')
@@ -140,10 +156,6 @@ export class GameGateway {
         @MessageBody() data: string,
         @ConnectedSocket() client: Socket,
     ): any {
-        try {
-            //this.LobbyManager.getLobbyInstance('0').Info.CheckMove(client.id).PaddleDown();
-        } catch (e) {
-            console.log(e);
-        }
+        this.LobbyManager.getUserLobby(client.data.username)?.Instance.Info.CheckMove(client.data.username)?.PaddleDown();
     }
 }

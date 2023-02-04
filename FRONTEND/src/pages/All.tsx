@@ -10,7 +10,6 @@ const MovePage = () => {
         <div>
             <Link to="/" className="btn btn-primary">Home</Link><div/>
             <Link to="/Lobby" className="btn btn-primary">Lobby</Link><div/>
-            <Link to="/Game" className="btn btn-primary">Game</Link>
         </div>
     );
 }

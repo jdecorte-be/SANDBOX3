@@ -1,14 +1,18 @@
 import io from 'socket.io-client';
 import { Gaming } from '../Canvas';
+import {Server, Socket} from 'socket.io';
 
 class Lobby {
     id: string;
     Players: string [];
     Instance : Gaming;
+    Ready : string [];
+    socketing: Map<string, Socket> = new Map<string, Socket>();
     constructor(id: string) {
         this.Instance = new Gaming(1000, 1000);
         this.id = id;
         this.Players = [];
+        this.Ready = [];
     }
 }
 
@@ -26,17 +30,24 @@ export class LobbyManager {
         this.LobbyList.push(lobby);
         return lobby;
     }
-    JoinLobby(login: string) {
+    JoinLobby(login: string, client: Socket) {
         let id = 0;
         if (this.isInLobby(login))
             throw new Error('Player already in lobby');
         let tLobby;
-
         tLobby = this.LobbyList.find((lobby) => lobby.id === id.toString());
         while (tLobby && id < 2) {
             if (tLobby && tLobby.Players.length < 2) {
-                if (tLobby.Players.push(login))
+                if (tLobby.Players.push(login)) {
+                    tLobby.socketing.set(login, client);
+                    if (tLobby.Players.length === 2) {
+                        tLobby.socketing.get(tLobby.Players[0])?.emit('Ready');
+                        tLobby.socketing.get(tLobby.Players[1])?.emit('Ready');
+                        return;
+                    }
+                    client.emit('Waiting Room');
                     return tLobby;
+                }
             }
             id++;
             tLobby = this.LobbyList.find((lobby) => lobby.id === id.toString());
@@ -72,5 +83,12 @@ export class LobbyManager {
             return true;
         else
             return false;
+    }
+    getUserLobby(login: string) {
+        const tLobby = this.LobbyList.find((lobby) => lobby.Players.includes(login));
+        if (tLobby)
+            return tLobby;
+        else
+            throw new Error('Player not in a lobby');
     }
 }
