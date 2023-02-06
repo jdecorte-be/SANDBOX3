@@ -5,6 +5,8 @@ import { Socket } from 'socket.io';
 let canvas: any;
 let context: any;
 
+const sleep = (ms: number) => new Promise(r => setTimeout(r, ms));
+
 class Player
 {
     x: number;
@@ -16,6 +18,7 @@ class Player
     min: number;
     max: number;
     speed: number;
+    name: string;
     constructor(x: number, y: number, width: number, height: number, color: string, score: number, min: number, max: number, speed: number)
     {
         this.x = x;
@@ -38,6 +41,9 @@ class Player
         if (this.y + this.speed + this.height <= this.max + 20)
             this.y += this.speed;
     }
+    RandomColor() {
+        this.color = '#'+ Math.floor(Math.random() * 16777215).toString(16);
+    }
 }
 
 class Ball
@@ -49,6 +55,7 @@ class Ball
     velocityX: number;
     velocityY: number;
     color: string;
+    custom = false;
     constructor(x: number, y: number, radius: number, speed: number, velocityX: number, velocityY: number, color: string)
     {
         this.x = x / 2;
@@ -59,19 +66,22 @@ class Ball
         this.velocityY = velocityY;
         this.color = color;
     }
+    RandomColor() {
+        this.color = '#'+ Math.floor(Math.random() * 16777215).toString(16);
+    }
 }
 
 export class gameInfo {
     Balling: Ball;
     Player1: Player;
     Player2: Player;
-    Connected : [string, string];
+    Connected : string [];
     Running: boolean;
     CDimension: { width: number; height: number };
 
     constructor(widths: number, heights: number) {
         this.Running = false;
-        this.Connected = ["", ""];
+        this.Connected = []
         this.CDimension = { width: widths, height: heights };
         this.Balling = new Ball(widths, heights, 10, 10, 5, 0, 'red');
         this.Player1 = new Player(0, 500, 20, 100, '#1542d3', 0, 0, heights, 10);
@@ -79,20 +89,15 @@ export class gameInfo {
     }
     CheckMove(id: string){
         console.log(this.Connected);
-        if (this.Connected[0] === "")
-            this.Connected[0] = id;
-        if (this.Connected[0] === id)
+        if (this.Connected.indexOf(id) === 0)
             return this.Player1;
-        if (this.Connected[1] === "")
-            this.Connected[1] = id;
-        if (this.Connected[1] === id)
+        else if (this.Connected.indexOf(id) === 1)
             return this.Player2;
-        if (this.Connected[0] !== id && this.Connected[1] !== id)
-            return;
         else
-            return this.Player1;
+            return null;
     }
 }
+
 
 export class Gaming {
     i = 0;
@@ -107,25 +112,35 @@ export class Gaming {
     getInfo(): gameInfo {
         return this.Info;
     }
-
     rendering(Client:Socket) {
-
+        console.log(this.Info.Connected.length);
         console.log("Rendering...");
         if (this.Info.Running === true)
             return;
-        if (this.Info.Connected[0] !== "" && this.Info.Connected[1] !== "")
+        if (this.Info.Connected.length === 2)
         {
             this.Info.Running = true;
             this.intID = setInterval(() => {
                 this.UpdateBall();
             }, 1000 / 60);
         }
-        else if (this.intID !== -1){
-            clearInterval(this.intID);
-            this.Info.Running = false;
-        }
         else
             return this.intID = -1;
+    }
+    Disconnect(id: string) {
+        const index = this.getInfo().Connected.indexOf(id);
+        if (this.getInfo().Running === false) {
+
+            if (index > -1) {
+                this.getInfo().Connected.splice(index, 1);
+            }
+            return "CONTINUE";
+        }
+        else if (index > -1) {
+            this.getInfo().Running = false;
+                return "STOP";
+        }
+        return "CONTINUE";
     }
     collision(b: any, p: any) {
         b.top = this.Info.Balling.y - this.Info.Balling.radius;
@@ -141,6 +156,12 @@ export class Gaming {
     }
 
     public UpdateBall() {
+        if (this.Info.Connected.length < 2){
+            clearInterval(this.intID);
+            this.Info.Running = false;
+            console.log("Game Stopped");
+            return;
+        }
         this.Info.Balling.x += this.Info.Balling.velocityX;
         this.Info.Balling.y += this.Info.Balling.velocityY;
         if (this.Info.Balling.x - this.Info.Balling.radius < 0) {
@@ -159,6 +180,10 @@ export class Gaming {
         if (player === 'u1' && this.collision(this.Info.Balling, this.Info.Player1))
         {
             console.log('u1');
+            if (this.getInfo().Balling.custom === true) {
+                this.getInfo().Balling.RandomColor();
+                this.getInfo().Player1.RandomColor();
+            }
             let colPoint: number = this.Info.Balling.y - (this.Info.Player1.y + this.Info.Player1.height / 2);
             colPoint = colPoint / (this.Info.Player1.height / 2);
             const angleRad: number = (colPoint * Math.PI) / 4;
@@ -172,6 +197,10 @@ export class Gaming {
         else if (player === 'u2' && this.collision(this.Info.Balling, this.Info.Player2))
         {
             console.log('u2');
+            if (this.getInfo().Balling.custom === true) {
+                this.getInfo().Balling.RandomColor();
+                this.getInfo().Player2.RandomColor();
+            }
             let colPoint: number = this.Info.Balling.y - (this.Info.Player2.y + this.Info.Player2.height / 2);
             colPoint = colPoint / (this.Info.Player2.height / 2);
             const angleRad: number = (colPoint * Math.PI) / 4;

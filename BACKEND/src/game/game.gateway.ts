@@ -25,6 +25,7 @@ import { UsersService } from "../users/users.service";
 import { JwtService } from "@nestjs/jwt";
 import { JwtStrategy } from "../authentication/jwt.strategy";
 import { ConfigService } from "@nestjs/config";
+import {DISCONNECT_EVENT} from "@nestjs/websockets/constants";
 
 @WebSocketGateway(3002, { cors: { origin: true, credentials: true } })
 export class GameGateway {
@@ -38,19 +39,7 @@ export class GameGateway {
 
     ) {
     }
-    //gameInstance = new Gaming(1000, 1000);
     LobbyManager = new LobbyManager();
-    // @UseGuards(JwtAuthenticationGuard)
-    // @SubscribeMessage('events')
-    // handleEvent(
-    //     @MessageBody() data: string,
-    //     @ConnectedSocket() client: Socket,
-    // ): any {
-    //
-    //     this.LobbyManager.createLobby();
-    //     //this.LobbyManager.getLobbyInstance('0').rendering(client);
-    //     //return this.LobbyManager.getLobbyInstance('0').Info;
-    // }
 
     afterInit(server: any) {
         console.log('Game server initialized');
@@ -79,7 +68,7 @@ export class GameGateway {
         @ConnectedSocket() client: Socket,
     ): any {
         if (this.LobbyManager.LobbyList.length === 0)
-            throw new Error('No lobby found');
+            return;
         return this.LobbyManager.getUserLobby(client.data.username).Instance.getInfo();
     }
     @SubscribeMessage('PlayerReady')
@@ -91,10 +80,24 @@ export class GameGateway {
         if (this.LobbyManager.isInLobby(client.data.username))
             this.LobbyManager.getUserLobby(client.data.username).Ready.push(client.data.username);
         if (this.LobbyManager.getUserLobby(client.data.username).Ready.length === 2) {
-            this.LobbyManager.getUserLobby(client.data.username).Instance.Info.Connected[0] = this.LobbyManager.getUserLobby(client.data.username).Ready[0];
-            this.LobbyManager.getUserLobby(client.data.username).Instance.Info.Connected[1] = this.LobbyManager.getUserLobby(client.data.username).Ready[1];
+            this.LobbyManager.getUserLobby(client.data.username).Instance.Info.Connected.push(this.LobbyManager.getUserLobby(client.data.username).Ready[0]);
+            this.LobbyManager.getUserLobby(client.data.username).Instance.Info.Connected.push(this.LobbyManager.getUserLobby(client.data.username).Ready[1]);
+            this.LobbyManager.getUserLobby(client.data.username).Instance.Info.Player1.name = this.LobbyManager.getUserLobby(client.data.username).Ready[0];
+            this.LobbyManager.getUserLobby(client.data.username).Instance.Info.Player2.name = this.LobbyManager.getUserLobby(client.data.username).Ready[1];
             this.LobbyManager.getUserLobby(client.data.username).Instance.rendering(client);
         }
+    }
+    @SubscribeMessage('Spectate')
+    handleSpectate(
+        @MessageBody() data: string,
+        @ConnectedSocket() client: Socket,
+    ): any {
+        console.log(`${client.data.username} want to spectate lobby 0`);
+        if (this.LobbyManager.getLobbyInstance('0') === undefined || this.LobbyManager.LobbyList[0].Ready.length < 2) {
+            throw new Error('No lobby to spectate');
+        }
+        this.LobbyManager.SpectatorJoin(client.data.username, client);
+        client.emit('SpectateReady');
     }
     @SubscribeMessage('CreateLobby')
     handleCreateLobby(
@@ -102,7 +105,17 @@ export class GameGateway {
         @ConnectedSocket() client: Socket,
     ): any {
         console.log('Attempting to create a lobby');
-        this.LobbyManager.createLobby();
+        this.LobbyManager.createLobby("Classic");
+        console.log(this.LobbyManager.LobbyList.length);
+
+    }
+    @SubscribeMessage('CreateRainbowLobby')
+    handleCreateRainbowLobby(
+        @MessageBody() data: string,
+        @ConnectedSocket() client: Socket,
+    ): any {
+        console.log('Attempting to create A Rainbow lobby');
+        this.LobbyManager.createLobby("Rainbow");
         console.log(this.LobbyManager.LobbyList.length);
 
     }
@@ -124,11 +137,15 @@ export class GameGateway {
 
     }
 
-    handleDisconnect(
-        @MessageBody() data: string,
-        @ConnectedSocket() client: Socket,
-    ): any {
-        console.log('Player disconnected');
+    async handleDisconnect(client : Socket){
+        if (!client || client === undefined)
+            return ;
+        if (this.LobbyManager.isSpectating(client.data.username))
+            this.LobbyManager.LeaveSpectating(client.data.username);
+        if (this.LobbyManager.isInLobby(client.data.username)) {
+            this.LobbyManager.LeaveLobby(client.data.username);
+        }
+        console.log(`${client.data.username} has been disconnected`);
     }
 
     @SubscribeMessage('LobbyInfo')
@@ -137,7 +154,7 @@ export class GameGateway {
         @ConnectedSocket() client: Socket,
     ): any {
         if (!client || client === undefined)
-            console.log('AH');
+            return ;
         console.log(client.handshake.headers.authorization)
         console.log(`${client.data.username}' - asking for lobby info`);
         this.LobbyManager.printLobby();

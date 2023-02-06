@@ -8,6 +8,10 @@ import LobbyPage from "../pages/LobbyPage";
 import GamePage from "../pages/GamePage";
 import MovePage from "../pages/All";
 import RoomWaiting from "../pages/RoomWaiting";
+import SpectatePage from "../pages/Spectate";
+import {GameWon} from "../pages/GameResult";
+import {GameLost} from "../pages/GameResult";
+import {Disconnected} from "../pages/GameResult";
 
 function Pathing(){
     return (
@@ -17,6 +21,10 @@ function Pathing(){
             <Route path='/Game' element={<GamePage/>}/>
             <Route path='/Move' element={<MovePage/>}/>
             <Route path='/RoomWaiting' element={<RoomWaiting/>}/>
+            <Route path='/Spectate' element={<SpectatePage/>}/>
+            <Route path='/GameWon' element={<GameWon/>}/>
+            <Route path='/GameLost' element={<GameLost/>}/>
+            <Route path='/Disconnected' element={<Disconnected/>}/>
         </Routes>
     )
 }
