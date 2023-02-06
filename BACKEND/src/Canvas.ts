@@ -19,6 +19,8 @@ class Player
     max: number;
     speed: number;
     name: string;
+    moveUp:boolean;
+    moveDown:boolean
     constructor(x: number, y: number, width: number, height: number, color: string, score: number, min: number, max: number, speed: number)
     {
         this.x = x;
@@ -30,6 +32,8 @@ class Player
         this.min = min;
         this.max = max;
         this.speed = speed;
+        this.moveDown = false;
+        this.moveUp = false;
     }
     PaddleUp()
     {
@@ -93,8 +97,30 @@ export class gameInfo {
             return this.Player1;
         else if (this.Connected.indexOf(id) === 1)
             return this.Player2;
-        else
-            return null;
+    }
+    MoveHandler(){
+        if (this.Player1.moveUp === true)
+            this.Player1.PaddleUp();
+        if (this.Player1.moveDown === true)
+            this.Player1.PaddleDown();
+        if (this.Player2.moveUp === true)
+            this.Player2.PaddleUp();
+        if (this.Player2.moveDown === true)
+            this.Player2.PaddleDown();
+    }
+    setMove(id: string, move: string, state: boolean){
+        if (move === "UP") {
+            if (this.Connected.indexOf(id) === 0)
+                this.Player1.moveUp = state;
+            else if (this.Connected.indexOf(id) === 1)
+                this.Player2.moveUp = state;
+        }
+        else if (move === "DOWN") {
+            if (this.Connected.indexOf(id) === 0)
+                this.Player1.moveDown = state;
+            else if (this.Connected.indexOf(id) === 1)
+                this.Player2.moveDown = state;
+        }
     }
 }
 
@@ -162,6 +188,7 @@ export class Gaming {
             console.log("Game Stopped");
             return;
         }
+        this.Info.MoveHandler();
         this.Info.Balling.x += this.Info.Balling.velocityX;
         this.Info.Balling.y += this.Info.Balling.velocityY;
         if (this.Info.Balling.x - this.Info.Balling.radius < 0) {

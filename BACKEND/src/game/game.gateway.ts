@@ -40,6 +40,7 @@ export class GameGateway {
     ) {
     }
     LobbyManager = new LobbyManager();
+    Moving = false;
 
     afterInit(server: any) {
         console.log('Game server initialized');
@@ -161,18 +162,20 @@ export class GameGateway {
     }
 
     @SubscribeMessage('PaddleUp')
-    handlePaddleUp(
-        @MessageBody() data: string,
-        @ConnectedSocket() client: Socket,
-    ): any {
-        this.LobbyManager.getUserLobby(client.data.username)?.Instance.Info.CheckMove(client.data.username)?.PaddleUp();
+    async handlePaddleUp(client: Socket, state: boolean
+    ) {
+            if (!this.LobbyManager.getUserLobby(client.data.username)?.Instance.Info.CheckMove(client.data.username))
+                return;
+            if (this.LobbyManager.getUserLobby(client.data.username)?.Instance.Info.CheckMove(client.data.username)?.moveUp !== undefined)
+                this.LobbyManager.getUserLobby(client.data.username)?.Instance.Info.setMove(client.data.username, "UP", state);
     }
 
     @SubscribeMessage('PaddleDown')
-    handlePaddleDown(
-        @MessageBody() data: string,
-        @ConnectedSocket() client: Socket,
-    ): any {
-        this.LobbyManager.getUserLobby(client.data.username)?.Instance.Info.CheckMove(client.data.username)?.PaddleDown();
+    async handlePaddleDown(client: Socket, state: boolean,
+    ) {
+        if (!this.LobbyManager.getUserLobby(client.data.username)?.Instance.Info.CheckMove(client.data.username))
+            return;
+        if (this.LobbyManager.getUserLobby(client.data.username)?.Instance.Info.CheckMove(client.data.username)?.moveUp !== undefined)
+            this.LobbyManager.getUserLobby(client.data.username)?.Instance.Info.setMove(client.data.username, "DOWN", state);
     }
 }

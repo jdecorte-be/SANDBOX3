@@ -2,6 +2,7 @@ import React, {useEffect, useRef} from 'react';
 import io from "socket.io-client";
 
 let canvas:any;
+//let keypress = false;
 let context:any;
 
 class Player
@@ -15,6 +16,8 @@ class Player
     min:number;
     max:number;
     speed:number;
+    moveUp:boolean;
+    moveDown:boolean
     constructor(x:number, y:number, width:number, height:number, color:string, score:number, min:number, max:number, speed:number) {
         this.x = x;
         this.y = y;
@@ -25,6 +28,8 @@ class Player
         this.min = min;
         this.max = max;
         this.speed = speed;
+        this.moveDown = false;
+        this.moveUp = false;
     }
     PaddleUp()
     {
@@ -93,9 +98,9 @@ export class Gaming{
         this.socket = io('http://localhost:3002', {extraHeaders: {Authorization: document.cookie}});
     }
     Draw = () => {
-            this.socket.emit('Ping', (data: gameInfo) => {
-                this.Info.copy(data);
-            });
+        this.socket.emit('Ping', (data: gameInfo) => {
+            this.Info.copy(data);
+        });
         ResetBall();
         DrawScore(canvas.width / 4, canvas.height / 4, '#ffffff', this.Info.Player1.score.toString());
         DrawScore(3 * canvas.width / 4, canvas.height / 4, '#ffffff',this.Info.Player2.score.toString());
@@ -120,14 +125,30 @@ export class Gaming{
                 setInterval(this.Draw, 1);
                 canvas.tabIndex = 1;
                 window.addEventListener('keydown', (e) => {
+                    if (e.repeat)
+                        return;
                     if ('ArrowUp' === e.key) {
-                        console.log(this.socket.id);
-                        this.socket.emit('PaddleUp', this.Info);
+                        console.log(e);
+                        this.socket.emit('PaddleUp', true);
+                    }
+                    if ('ArrowDown' === e.key) {;
+                        console.log(e);
+                        this.socket.emit('PaddleDown', true)
+                    }
+                    console.log(e.key);
+                });
+                window.addEventListener('keyup', (e) => {
+                    if (e.repeat)
+                        return;
+                    if ('ArrowUp' === e.key) {
+                        console.log(e);
+                        this.socket.emit('PaddleUp', false);
                     }
                     if ('ArrowDown' === e.key) {
-                        console.log(this.socket.id);
-                        this.socket.emit('PaddleDown', this.Info)
+                        console.log(e);
+                        this.socket.emit('PaddleDown', false)
                     }
+                    console.log(e);
                 });
             }
         });
