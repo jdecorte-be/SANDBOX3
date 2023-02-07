@@ -1,7 +1,7 @@
 import axios from 'axios';
-import React, { useState, ChangeEvent } from 'react';
+import { useState, ChangeEvent } from 'react';
 
-export const FileUpload = ({ onSubmit }: { onSubmit: () => void }) => {
+export const FileUpload = () => {
   const [file, setFile] = useState<File | null>(undefined);
   const [res, setRes] = useState<any>();
 
@@ -26,8 +26,9 @@ export const FileUpload = ({ onSubmit }: { onSubmit: () => void }) => {
     const formData = new FormData();
     formData.append('user', sessionStorage.getItem('currentUser'));
     formData.append('file', file);
+
     await axios
-      .post('http://localhost:3001/app/auth/data', formData)
+      .post('http://localhost:3001/app/users/avatar', formData)
       .then((res) => {
         base64FileURL(file, (obj) => {
           setRes(obj);
@@ -37,8 +38,7 @@ export const FileUpload = ({ onSubmit }: { onSubmit: () => void }) => {
       .catch((err) => {
         console.log(err);
       });
-      onSubmit();
-  };
+    };
 
   return (
     <form onSubmit={handleSubmit} encType="multipart/form-data">

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import axios from 'axios';
 
-export const SignUp = ({ onSubmit }: { onSubmit: () => void }) => {
+export const SignUp = () => {
   const [login, setLogin] = useState('');
   const [password, setPassword] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
@@ -17,12 +17,20 @@ export const SignUp = ({ onSubmit }: { onSubmit: () => void }) => {
     axios
       .post('http://localhost:3001/app/auth/signup', form)
       .then((res) => {
-        //console.log(res.data);
-        if (res.data.status !== 400)
-          onSubmit();
+        if (res.data.user.code === '23505') {
+          if (res.data.user.detail.includes('login')) {
+            console.log('Login already in use.');
+          } else {
+            console.log('Phone number already in use.');
+          }
+        }
+        if (res.data.status !== 400) {
+          console.log(res.data);
+          sessionStorage.setItem('currentUser', res.data.user.id);
+        }
       })
       .catch((err) => {
-        //console.log(err);
+        console.log(err);
       });
   };
 

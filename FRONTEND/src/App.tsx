@@ -4,9 +4,9 @@ import './App.css';
 import { SignUp } from './components/SignUp';
 import { SignIn } from './components/SignIn';
 import { Code2FA } from './components/Code2FA';
-import axios from 'axios';
-import { Gaming } from './components/Canvas';
 import { FileUpload } from './components/FileUpload';
+import axios from 'axios';
+//import { Gaming } from './components/Canvas';
 
 function App() {
   // const click = () => {
@@ -44,38 +44,18 @@ function App() {
   //     console.log(data);
   //   });
   // };
-  // return (
-  //   <>
-  //     <SignUp />
-  //     <FileUpload />
-  //     <SignIn />
-  //     <Code2FA />
-  //     {/* <button onClick={click}>Who</button> */}
-  //     {/* <button onClick={addLobby}>Create Lobby</button> */}
-  //     {/* <button onClick={joinLobby}>Join Lobby</button> */}
-  //     {/* <button onClick={leaveLobby}>Leave Lobby</button> */}
-  //     {/* <button onClick={printLobby}>Print Lobby</button> */}
-  //   </>
-  // );
-  const components = [SignUp, FileUpload, SignIn, Code2FA];
-  const [index, setIndex] = useState(0);
-
-  const handleSubmit = (formIndex: number) => {
-    console.log(formIndex);
-    setIndex(formIndex + 1);
-  };
-
   return (
-    <div>
-      {components.map((Component, formIndex) => (
-        <>
-          {formIndex === index && (
-            <Component onSubmit={() => handleSubmit(formIndex)} />
-          )}
-        </>
-      ))}
-    </div>
+    <>
+      <SignUp />
+      <FileUpload />
+      <SignIn />
+      <Code2FA />
+      {/* <button onClick={click}>Who</button> */}
+      {/* <button onClick={addLobby}>Create Lobby</button> */}
+      {/* <button onClick={joinLobby}>Join Lobby</button> */}
+      {/* <button onClick={leaveLobby}>Leave Lobby</button> */}
+      {/* <button onClick={printLobby}>Print Lobby</button> */}
+    </>
   );
 }
-
 export default App;

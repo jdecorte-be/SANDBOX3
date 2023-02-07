@@ -1,33 +1,48 @@
-import { IsNotEmpty, IsString, MaxLength, NotContains } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsPhoneNumber,
+  IsString,
+  MaxLength,
+  MinLength,
+  NotContains,
+} from 'class-validator';
 
 export class SignDto {
   @IsNotEmpty()
   @IsString()
+  @MinLength(4)
   @MaxLength(15)
+  @NotContains(' ')
   login: string;
 
   @IsString()
   @IsNotEmpty()
-  @NotContains(' ')
+  @MinLength(4)
   @MaxLength(15)
+  @NotContains(' ')
   password: string;
 
   @IsString()
   @IsNotEmpty()
   @NotContains(' ')
+  @IsString()
+  @IsPhoneNumber()
   phoneNumber: string;
 }
 
 export class loginDto {
   @IsNotEmpty()
   @IsString()
+  @MinLength(4)
   @MaxLength(15)
+  @NotContains(' ')
   login: string;
 
-  @IsString()
   @IsNotEmpty()
-  @NotContains(' ')
+  @IsString()
+  @MinLength(4)
   @MaxLength(15)
+  @NotContains(' ')
   password: string;
 }
 

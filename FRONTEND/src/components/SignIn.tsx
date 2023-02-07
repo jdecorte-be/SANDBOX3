@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { useState } from 'react';
 
-export const SignIn = ({ onSubmit }: { onSubmit: () => void }) => {
+export const SignIn = () => {
   const [login, setLogin] = useState('');
   const [password, setPassword] = useState('');
 
@@ -17,13 +17,12 @@ export const SignIn = ({ onSubmit }: { onSubmit: () => void }) => {
         headers: {},
       })
       .then((res) => {
-        sessionStorage.setItem('currentUser', res.data.foundUser.id);
-        console.log(res.data);
+        sessionStorage.setItem('currentUser', res.data.user.id);
+        console.log('===>', res.data);
       })
       .catch((err) => {
-        console.log(err);
+        console.log(err.response.data); // Invalid credentials
       });
-      onSubmit();
   };
 
   return (

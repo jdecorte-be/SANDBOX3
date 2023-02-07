@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { useState } from 'react';
 
-export const Code2FA = ({ onSubmit }: { onSubmit: () => void }) => {
+export const Code2FA = () => {
   const [code, setCode] = useState('');
 
   const handleSubmit = async (event: any) => {
@@ -21,7 +21,6 @@ export const Code2FA = ({ onSubmit }: { onSubmit: () => void }) => {
       .catch((err) => {
         console.log(err);
       });
-      onSubmit();
   };
 
   return (

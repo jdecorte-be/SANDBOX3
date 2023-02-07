@@ -2,7 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './users.entity';
-import { SignDto } from 'src/users/users.dto';
+import { SignDto, loginDto } from 'src/users/users.dto';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
@@ -26,8 +26,6 @@ export class UsersService {
     id: number,
     buffer: Buffer,
     filename: string,
-    type: string,
-    size: number,
   ): Promise<User | null> {
     console.log(`users.service: uploadFile(${id} -> ${filename})`);
     const user = await this.getById(id);
@@ -64,8 +62,8 @@ export class UsersService {
       password: hash,
       phoneNumber: user.phoneNumber,
     };
-    const newUser = await this.userRepository.save(reqBody).catch(() => {
-      return null;
+    const newUser = await this.userRepository.save(reqBody).catch((err) => {
+      return err;
     });
     if (newUser) {
       return newUser;
@@ -73,7 +71,7 @@ export class UsersService {
     return null;
   }
 
-  async signIn(user: SignDto): Promise<User | null> {
+  async signIn(user: loginDto): Promise<User | null> {
     console.log(`users.service: signIn(${user.login})`);
     const { login } = user;
     const foundUser = await this.userRepository.findOneBy({ login });
