@@ -12,6 +12,7 @@ class Lobby {
     socketing: Map<string, Socket> = new Map<string, Socket>();
     constructor(id: string) {
         this.Instance = new Gaming(1000, 1000);
+        this.Instance.intID = id;
         this.id = id;
         this.Players = [];
         this.Ready = [];
@@ -22,11 +23,11 @@ class Lobby {
 
 export class LobbyManager {
     LobbyList: Lobby[];
+    Room : Server;
 
     constructor() {
         this.LobbyList = [];
     }
-
     createLobby(Mode: 'Rainbow' | 'Classic'): Lobby {
         const lobby = new Lobby(this.LobbyList.length.toString());
         this.LobbyList.push(lobby);
@@ -36,16 +37,22 @@ export class LobbyManager {
         return lobby;
     }
     JoinLobby(login: string, client: Socket) {
+
         let id = 0;
         if (this.isInLobby(login))
             throw new Error('Player already in lobby');
         let tLobby;
         tLobby = this.LobbyList.find((lobby) => lobby.id === id.toString());
         while (tLobby) {
+
             if (tLobby && tLobby.Players.length < 2) {
                 if (tLobby.Players.push(login)) {
                     tLobby.socketing.set(login, client);
+                    client.join(tLobby.id);
+                    console.log(client.data.username + ' joined lobby ' + tLobby.id);
                     if (tLobby.Players.length === 2) {
+                        this.Room.to(tLobby.id).emit('Test', tLobby.Players);
+                        tLobby.Instance.setRoom(this.Room);
                         tLobby.socketing.get(tLobby.Players[0])?.emit('Ready');
                         tLobby.socketing.get(tLobby.Players[1])?.emit('Ready');
                         return;

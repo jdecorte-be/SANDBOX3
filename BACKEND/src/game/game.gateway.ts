@@ -16,7 +16,7 @@ import {
     Res,
     UseGuards,
 } from '@nestjs/common';
-import { Socket } from 'socket.io';
+import { Socket, Server } from 'socket.io';
 import { Gaming } from '../Canvas';
 import { LobbyManager } from '../lobby/lobby';
 import { JwtAuthenticationGuard, LocalAuthGuard } from '../authentication/authentication.guard';
@@ -42,8 +42,9 @@ export class GameGateway {
     LobbyManager = new LobbyManager();
     Moving = false;
 
-    afterInit(server: any) {
+    afterInit(server: Server) {
         console.log('Game server initialized');
+        this.LobbyManager.Room = server;
     }
     @UseGuards(JwtAuthenticationGuard)
     async handleConnection(client: Socket, ){
@@ -61,16 +62,6 @@ export class GameGateway {
         const info = this.jwtService.verify(token, { secret: secret });
         client.data.username = info.login;
         console.log('Token provided');
-    }
-
-    @SubscribeMessage('Ping')
-    handlePing(
-        @MessageBody() data: string,
-        @ConnectedSocket() client: Socket,
-    ): any {
-        if (this.LobbyManager.LobbyList.length === 0)
-            return;
-        return this.LobbyManager.getUserLobby(client.data.username).Instance.getInfo();
     }
     @SubscribeMessage('PlayerReady')
     handlePlayerReady(

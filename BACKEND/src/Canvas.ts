@@ -1,6 +1,6 @@
 /* eslint-disable prettier/prettier */
 import io from 'socket.io-client';
-import { Socket } from 'socket.io';
+import { Socket, Server } from 'socket.io';
 
 let canvas: any;
 let context: any;
@@ -90,6 +90,7 @@ export class gameInfo {
         this.Balling = new Ball(widths, heights, 10, 10, 5, 0, 'red');
         this.Player1 = new Player(0, 500, 20, 100, '#1542d3', 0, 0, heights, 10);
         this.Player2 = new Player(widths - 20, (heights / 2), 20, 100, '#05f315', 0, 0, heights, 10);
+
     }
     CheckMove(id: string){
         console.log(this.Connected);
@@ -129,12 +130,15 @@ export class Gaming {
     i = 0;
     intID: any;
     Info: gameInfo;
+    Room: Server;
 
     constructor(width: number, height: number) {
         this.Info = new gameInfo(width, height);
-        this.intID = -1;
+        this.Room = new Server();
     }
-
+    setRoom(Room: Server) {
+        this.Room = Room;
+    }
     getInfo(): gameInfo {
         return this.Info;
     }
@@ -142,7 +146,8 @@ export class Gaming {
         console.log(this.Info.Connected.length);
         console.log("Rendering...");
         if (this.Info.Running === true)
-            return;
+
+        return;
         if (this.Info.Connected.length === 2)
         {
             this.Info.Running = true;
@@ -242,7 +247,6 @@ export class Gaming {
     }
 
     ReplaceBall(i: number) {
-        //console.log('fdp');
         this.Info.Balling.x = this.Info.CDimension.width / 2;
         this.Info.Balling.y = this.Info.CDimension.height / 2;
 
