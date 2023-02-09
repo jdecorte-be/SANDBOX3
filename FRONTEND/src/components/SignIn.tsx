@@ -18,7 +18,7 @@ export const SignIn = () => {
       })
       .then((res) => {
         sessionStorage.setItem('currentUser', res.data.user.id);
-        console.log('===>', res.data);
+        document.cookie = res.data.cookie;
       })
       .catch((err) => {
         console.log(err.response.data); // Invalid credentials

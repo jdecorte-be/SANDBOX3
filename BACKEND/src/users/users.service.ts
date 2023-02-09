@@ -2,8 +2,20 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './users.entity';
-import { SignDto, loginDto } from 'src/users/users.dto';
+import {
+  LeadeBoardDto,
+  MatchHistoryDto,
+  ProfileDto,
+  SignDto,
+  UserIdDto,
+  UserLoginDto,
+  UserRelationDto,
+  UserResponseDto,
+  loginDto,
+} from 'src/users/users.dto';
 import * as bcrypt from 'bcrypt';
+import { readFileSync } from 'graceful-fs';
+import * as path from 'path';
 
 @Injectable()
 export class UsersService {
@@ -22,56 +34,64 @@ export class UsersService {
     return await this.userRepository.clear();
   }
 
-  async uploadFile(
-    id: number,
-    buffer: Buffer,
-    filename: string,
-  ): Promise<User | null> {
-    console.log(`users.service: uploadFile(${id} -> ${filename})`);
-    const user = await this.getById(id);
-    if (user) {
-      user.filename = filename;
-      user.avatar = buffer;
-      const res = await this.userRepository.save(user);
-      return res;
-    } else {
-      return null;
-    }
-  }
-
-  async findOneByLogin(login: string): Promise<User | null> {
-    console.log(`users.service: findOneByLogin(${login})`);
+  async getByLogin(login: string): Promise<User | null> {
+    console.log(`users.service: getByLogin(${login})`);
     const result = await this.userRepository.findOneBy({ login });
     if (result) return result;
     return null;
   }
 
-  async getById(id: number): Promise<User | null> {
-    console.log(`users.service: getByid(${id})`);
-    const result = await this.userRepository.findOneBy({ id });
-    if (result) return result;
+  async uploadFile(
+    id: number,
+    buffer: Buffer,
+    filename: string,
+  ): Promise<ProfileDto | null> {
+    console.log(`users.service: uploadFile(${id} -> ${filename})`);
+    const user = await this.getById(id);
+    if (user) {
+      user.filename = filename;
+      user.avatar = buffer;
+      await this.userRepository.save(user).catch((err) => {
+        return err;
+      });
+      return {
+        login: user.login,
+        avatar: user.avatar,
+        status: user.status,
+      };
+    }
     return null;
   }
 
-  async signUp(user: SignDto): Promise<User | null> {
+  async getById(id: number) {
+    console.log(`users.service: getByid(${id})`);
+    return this.userRepository.findOneBy({ id });
+  }
+
+  async signUp(user: SignDto): Promise<UserResponseDto | null> {
     console.log(`users.service: signUp(${user.login})`);
     const salt = bcrypt.genSaltSync();
     const hash = bcrypt.hashSync(user.password, salt);
     const reqBody = {
       login: user.login,
-      password: hash,
+      _password: hash,
       phoneNumber: user.phoneNumber,
+      avatar: readFileSync(path.resolve('src/users/default.jpg')),
     };
     const newUser = await this.userRepository.save(reqBody).catch((err) => {
       return err;
     });
     if (newUser) {
-      return newUser;
+      return {
+        id: newUser.id,
+        login: newUser.login,
+        status: newUser.status,
+      };
     }
     return null;
   }
 
-  async signIn(user: loginDto): Promise<User | null> {
+  async signIn(user: loginDto): Promise<UserResponseDto | null> {
     console.log(`users.service: signIn(${user.login})`);
     const { login } = user;
     const foundUser = await this.userRepository.findOneBy({ login });
@@ -79,10 +99,165 @@ export class UsersService {
       const { password } = foundUser;
       const result = bcrypt.compareSync(user.password, password);
       if (result) {
-        foundUser.isActive = true;
-        await this.userRepository.save(foundUser);
-        return foundUser;
+        foundUser.status = 'online';
+        await this.userRepository.save(foundUser).catch((err) => {
+          return err;
+        });
+        return {
+          id: foundUser.id,
+          login: foundUser.login,
+          status: foundUser.status,
+        };
       }
+    }
+    return null;
+  }
+
+  async blockUser(data: UserRelationDto): Promise<UserResponseDto | null> {
+    console.log(`users.service: blockUser(${data.target})`);
+    const user = await this.getById(data.id);
+    if (user) {
+      user.blackList.push(data.target);
+      await this.userRepository.save(user).catch((err) => {
+        return err;
+      });
+      return {
+        id: user.id,
+        login: user.login,
+        status: user.status,
+      };
+    }
+    return null;
+  }
+
+  async unblockUser(data: UserRelationDto): Promise<UserResponseDto | null> {
+    console.log(`users.service: unblockUser(${data.target})`);
+    const user = await this.getById(data.id);
+    if (user) {
+      user.blackList = user.blackList.filter((value) => {
+        return value !== data.target;
+      });
+      await this.userRepository.save(user).catch((err) => {
+        return err;
+      });
+      return {
+        id: user.id,
+        login: user.login,
+        status: user.status,
+      };
+    }
+    return null;
+  }
+
+  async addFriend(data: UserRelationDto): Promise<UserResponseDto | null> {
+    console.log(`users.service: addFriend(${data.target})`);
+    const user = await this.getById(data.id);
+    if (user) {
+      user.friendList.push(data.target);
+      await this.userRepository.save(user).catch((err) => {
+        return err;
+      });
+      return {
+        id: user.id,
+        login: user.login,
+        status: user.status,
+      };
+    }
+    return null;
+  }
+
+  async removeFriend(data: UserRelationDto): Promise<UserResponseDto | null> {
+    console.log(`users.service: removeFriend(${data.target})`);
+    const user = await this.getById(data.id);
+    if (user) {
+      user.friendList = user.friendList.filter((value) => {
+        return value !== data.target;
+      });
+      await this.userRepository.save(user).catch((err) => {
+        return err;
+      });
+      return {
+        id: user.id,
+        login: user.login,
+        status: user.status,
+      };
+    }
+    return null;
+  }
+
+  async addToMatchHistory(
+    userData: UserIdDto,
+    macthData: MatchHistoryDto,
+  ): Promise<User | null> {
+    console.log(`users.service: addToMatchHistory(${userData.id})`);
+    const user = await this.getById(userData.id);
+    if (user) {
+      const newItem = new MatchHistoryDto();
+      newItem.map = macthData.map;
+      newItem.opponent = macthData.opponent;
+      newItem.scoreX = macthData.scoreX;
+      newItem.scoreY = macthData.scoreY;
+      await this.userRepository.save(user).catch((err) => {
+        return err;
+      });
+      return user;
+    }
+    return null;
+  }
+
+  async getMatchHistory(
+    userData: UserIdDto,
+  ): Promise<MatchHistoryDto[] | null> {
+    console.log(`users.service: getMatchHistory(${userData.id})`);
+    const user = await this.getById(userData.id);
+    if (user) {
+      return user.matchHistory;
+    }
+    return null;
+  }
+
+  async getLeaderoard(): Promise<LeadeBoardDto[] | null> {
+    const users = this.userRepository.find();
+    if (users) {
+      const sortedUsers = (await users).sort(
+        (a, b) => b.nVictories - a.nVictories,
+      );
+      const leaderBoard = sortedUsers.map((user, index) => {
+        return {
+          login: user.login,
+          victories: user.nVictories,
+          rank: index + 1,
+          avatar: user.avatar,
+        };
+      });
+      if (leaderBoard) return leaderBoard;
+    }
+    return null;
+  }
+
+  async getProfile(userData: UserIdDto): Promise<ProfileDto | null> {
+    const user = await this.getById(userData.id);
+    if (user) {
+      return {
+        login: user.login,
+        avatar: user.avatar,
+        status: user.status,
+      };
+    }
+    return null;
+  }
+
+  async updateLogin(
+    userData: UserIdDto,
+    login: UserLoginDto,
+  ): Promise<UserLoginDto | null> {
+    const user = await this.getById(userData.id);
+    if (user) {
+      user.login = login.login;
+      await this.userRepository.save(user).catch((err) => {
+        return err;
+      });
+      return login;
     }
     return null;
   }

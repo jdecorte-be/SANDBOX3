@@ -13,7 +13,7 @@ export class AuthenticationService {
 
   async validateUser(username: string, password: string): Promise<any> {
     console.log(`authentication.service validateUser(${username})`);
-    const user = await this.usersService.findOneByLogin(username);
+    const user = await this.usersService.getByLogin(username);
     console.log(user);
     if (user) {
       const result = bcrypt.compareSync(user.password, password);
@@ -23,7 +23,7 @@ export class AuthenticationService {
   }
 
   async login(user: any) {
-    console.log(`authentication.service login(${user})`);
+    console.log(`authentication.service login(${user.login})`);
     const payload = {
       sub: user.id,
       name: user.login,

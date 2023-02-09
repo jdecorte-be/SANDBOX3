@@ -16,7 +16,7 @@ export class SessionSerializer extends PassportSerializer {
 
   deserializeUser(payload: any, done: Function) {
     console.log(`deserialize(${payload})`);
-    const found = this.userService.findOneByLogin(payload.login);
+    const found = this.userService.getByLogin(payload.login);
     if (found === null) {
       done(null, null);
     }

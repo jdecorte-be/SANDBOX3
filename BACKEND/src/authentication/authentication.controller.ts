@@ -42,11 +42,11 @@ export class AuthenticationController {
     return str;
   }
 
-  //@UseGuards(JwtAuthenticationGuard)
-  //@Get('who')
-  //who(@Request() req: any) {
-  //  return req.user;
-  //}
+  @UseGuards(JwtAuthenticationGuard)
+  @Get('who')
+  who(@Req() req: any) {
+   return req.user;
+  }
 
   @UseGuards(LocalAuthGuard)
   @Get()

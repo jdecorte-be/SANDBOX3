@@ -5,7 +5,10 @@ import {
   Post,
   Req,
   Res,
-  ClassSerializerInterceptor,
+  Body,
+  Param,
+  ParseIntPipe,
+  StreamableFile,
 } from '@nestjs/common';
 import {
   Response as ExpressResponse,
@@ -14,9 +17,10 @@ import {
 import { UsersService } from './users.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import * as multer from 'multer';
+import { UserIdDto } from './users.dto';
+import { Readable } from 'stream';
 const storage = multer.memoryStorage();
 
-@UseInterceptors(ClassSerializerInterceptor)
 @Controller('users')
 export class UsersController {
   constructor(private usersService: UsersService) {}
@@ -39,7 +43,6 @@ export class UsersController {
     console.log(`users.controller: getFile()`);
     if (req.file && req.body.user) {
       if (!['image/png', 'image/jpeg'].includes(req.file?.mimetype)) {
-        console.log('invalid file type');
         return res
           .status(415)
           .send(
@@ -47,7 +50,6 @@ export class UsersController {
           );
       }
       if (req.file?.size > 100000) {
-        console.log('invalid file size');
         return res
           .status(413)
           .send(
@@ -65,6 +67,21 @@ export class UsersController {
       return res
         .status(400)
         .send('Invalid request. Please choose a different file');
+    }
+  }
+
+  @Post('profile')
+  async getProfile(@Body() body: UserIdDto) {
+    console.log('---->', body.id, typeof body.id);
+    const user = await this.usersService.getById(body.id);
+    if (user) {
+      const avatar = user.avatar;
+      const base64EncodedAvatar = Buffer.from(avatar).toString('base64');
+      return {
+        avatar: base64EncodedAvatar,
+        login: user.login,
+        status: user.status,
+      }
     }
   }
 }

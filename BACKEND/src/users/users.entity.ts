@@ -1,14 +1,8 @@
-import { Exclude } from 'class-transformer';
 import { readFileSync } from 'graceful-fs';
 import * as path from 'path';
 import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
-import {
-  IsString,
-  MinLength,
-  MaxLength,
-  IsBoolean,
-  Matches,
-} from 'class-validator';
+import { MatchHistoryDto } from './users.dto';
+const defaultImg = readFileSync(path.resolve('src/users/default.jpg'));
 
 @Entity()
 export class User {
@@ -16,32 +10,42 @@ export class User {
   public id: number;
 
   @Column({ unique: true })
-  @IsString()
-  @MinLength(4)
-  @MaxLength(15)
   public login: string;
 
   @Column()
-  @Exclude()
-  @IsString()
-  @MinLength(4)
-  @MaxLength(15)
-  password: string;
+  private _password: string;
+
+  get password(): string {
+    return this._password;
+  }
+
+  set password(value: string) {
+    this._password = value;
+  }
 
   @Column({ unique: true })
   phoneNumber: string;
 
-  @Column({ default: false, nullable: true })
-  @IsBoolean()
-  public isActive: boolean;
+  @Column({ default: 'offline' })
+  public status: string;
+
+  @Column('text', { array: true, nullable: true })
+  blackList: string[];
+
+  @Column('text', { array: true, nullable: true })
+  friendList: string[];
+
+  @Column('jsonb', { nullable: true })
+  matchHistory: MatchHistoryDto[];
+
+  @Column({ default: 0 })
+  nVictories: number;
 
   @Column({ default: 'default.jpg' })
-  @IsString()
   filename: string;
 
   @Column({
     type: 'bytea',
-    default: readFileSync(path.resolve('src/users/default.jpg')),
   })
   avatar: Uint8Array;
 }
