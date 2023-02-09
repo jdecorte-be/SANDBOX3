@@ -51,7 +51,7 @@ export class LobbyManager {
                     client.join(tLobby.id);
                     console.log(client.data.username + ' joined lobby ' + tLobby.id);
                     if (tLobby.Players.length === 2) {
-                        this.Room.to(tLobby.id).emit('Test', tLobby.Players);
+                        this.Room.to('0').emit('Test');
                         tLobby.Instance.setRoom(this.Room);
                         tLobby.socketing.get(tLobby.Players[0])?.emit('Ready');
                         tLobby.socketing.get(tLobby.Players[1])?.emit('Ready');

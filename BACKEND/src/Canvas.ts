@@ -132,7 +132,7 @@ export class Gaming {
     Info: gameInfo;
     Room: Server;
 
-    constructor(width: number, height: number) {
+    constructor(width: number, height: number, ) {
         this.Info = new gameInfo(width, height);
         this.Room = new Server();
     }
@@ -193,6 +193,7 @@ export class Gaming {
             console.log("Game Stopped");
             return;
         }
+        this.Room.to('0').emit('Ping', this.Info);
         this.Info.MoveHandler();
         this.Info.Balling.x += this.Info.Balling.velocityX;
         this.Info.Balling.y += this.Info.Balling.velocityY;

@@ -98,7 +98,7 @@ export class Gaming{
         this.socket = io('http://localhost:3002', {extraHeaders: {Authorization: document.cookie}});
     }
     Draw = () => {
-        this.socket.emit('Ping', (data: gameInfo) => {
+        this.socket.on('Ping', (data:gameInfo) => {
             this.Info.copy(data);
         });
         ResetBall();

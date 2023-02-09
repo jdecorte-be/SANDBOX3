@@ -45,6 +45,10 @@ function LobbyPage() {
         Navigate('/Spectate');
     });
 
+    game.socket.on('Test', () => {
+        Navigate('/Disconnected');
+    });
+
     return (
         <div>
             <button onClick={click}>Who</button>

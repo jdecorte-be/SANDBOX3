@@ -18,6 +18,10 @@ function GamePage() {
         Navigate('/Disconnected');
     });
 
+    game.socket.on('Test', () => {
+        Navigate('/Disconnected');
+    });
+
     return (
         <div>
             {game.Canvas()}
