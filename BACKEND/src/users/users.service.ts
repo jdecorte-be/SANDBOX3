@@ -8,7 +8,6 @@ import {
   ProfileDto,
   SignDto,
   UserIdDto,
-  UserLoginDto,
   UserRelationDto,
   UserResponseDto,
   loginDto,
@@ -45,7 +44,7 @@ export class UsersService {
     id: number,
     buffer: Buffer,
     filename: string,
-  ): Promise<ProfileDto | null> {
+  ): Promise<UserIdDto | null> {
     console.log(`users.service: uploadFile(${id} -> ${filename})`);
     const user = await this.getById(id);
     if (user) {
@@ -55,17 +54,15 @@ export class UsersService {
         return err;
       });
       return {
-        login: user.login,
-        avatar: user.avatar,
-        status: user.status,
+        id: user.id,
       };
     }
     return null;
   }
 
-  async getById(id: number) {
+  async getById(id: number): Promise<User | null> {
     console.log(`users.service: getByid(${id})`);
-    return this.userRepository.findOneBy({ id });
+    return await this.userRepository.findOneBy({ id });
   }
 
   async signUp(user: SignDto): Promise<UserResponseDto | null> {
@@ -216,19 +213,14 @@ export class UsersService {
     return null;
   }
 
-  async getLeaderoard(): Promise<LeadeBoardDto[] | null> {
+  async getLeaderboard(): Promise<(string | number)[][] | null> {
     const users = this.userRepository.find();
     if (users) {
       const sortedUsers = (await users).sort(
         (a, b) => b.nVictories - a.nVictories,
       );
       const leaderBoard = sortedUsers.map((user, index) => {
-        return {
-          login: user.login,
-          victories: user.nVictories,
-          rank: index + 1,
-          avatar: user.avatar,
-        };
+        return [user.login, user.nVictories, index + 1];
       });
       if (leaderBoard) return leaderBoard;
     }
@@ -247,17 +239,13 @@ export class UsersService {
     return null;
   }
 
-  async updateLogin(
-    userData: UserIdDto,
-    login: UserLoginDto,
-  ): Promise<UserLoginDto | null> {
-    const user = await this.getById(userData.id);
+  async updateLogin(user: User, newLogin: string): Promise<any> {
     if (user) {
-      user.login = login.login;
+      user.login = newLogin;
       await this.userRepository.save(user).catch((err) => {
         return err;
       });
-      return login;
+      return user;
     }
     return null;
   }

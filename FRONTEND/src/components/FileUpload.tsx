@@ -3,7 +3,7 @@ import { useState, ChangeEvent } from 'react';
 
 export const FileUpload = () => {
   const [file, setFile] = useState<File | null>(undefined);
-  const [res, setRes] = useState<string>();
+  const [avatar, setAvatar] = useState<string>();
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     setFile(event.target.files?.[0]);
@@ -31,7 +31,7 @@ export const FileUpload = () => {
       .post('http://localhost:3001/app/users/avatar', formData)
       .then((res) => {
         base64FileURL(file, (obj) => {
-          setRes(obj);
+          setAvatar(obj);
         });
         console.log(res?.data);
       })
@@ -46,12 +46,10 @@ export const FileUpload = () => {
       <button type="submit">Upload</button>
       <img
         className="avatar"
-        src={res}
+        src={avatar}
         alt="avatar"
         style={{ height: '5%', width: '5%' }}
       />
     </form>
   );
 };
-
-export default FileUpload;

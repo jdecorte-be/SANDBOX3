@@ -37,11 +37,11 @@ export class UserResponseDto {
   @IsInt()
   @IsNotEmpty()
   id: number;
-  
+
   @IsString()
   @IsNotEmpty()
   login: string;
-  
+
   @IsString()
   @IsNotEmpty()
   status: string;
@@ -128,4 +128,12 @@ export class UserRelationDto {
 
   @IsString()
   target: string;
+}
+
+export class UpdateProfileDto {
+  @IsInt()
+  id: number;
+
+  @IsString()
+  login?: string;
 }

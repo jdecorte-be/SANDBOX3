@@ -8,7 +8,6 @@ import {
   Body,
   Param,
   ParseIntPipe,
-  StreamableFile,
 } from '@nestjs/common';
 import {
   Response as ExpressResponse,
@@ -17,8 +16,7 @@ import {
 import { UsersService } from './users.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import * as multer from 'multer';
-import { UserIdDto } from './users.dto';
-import { Readable } from 'stream';
+import { UpdateProfileDto } from './users.dto';
 const storage = multer.memoryStorage();
 
 @Controller('users')
@@ -56,13 +54,21 @@ export class UsersController {
             'The file size exceeds the maximum allowed size specified by the server. (100ko).',
           );
       }
-      const user = await this.usersService.uploadFile(
+      await this.usersService.uploadFile(
         req.body?.user,
         req.file?.buffer,
         req.file?.originalname,
       );
+      const user = await this.usersService.getById(
+        Number.parseInt(req.body.user),
+      );
       if (user) {
-        return res.status(200).send(user);
+        const base64EncodedAvatar = Buffer.from(user.avatar).toString('base64');
+        return res.status(200).send({
+          avatar: base64EncodedAvatar,
+          login: user.login,
+          status: user.status,
+        });
       }
       return res
         .status(400)
@@ -71,17 +77,43 @@ export class UsersController {
   }
 
   @Post('profile')
-  async getProfile(@Body() body: UserIdDto) {
-    console.log('---->', body.id, typeof body.id);
+  async getProfile(
+    @Body() body: UpdateProfileDto,
+    @Res() res: ExpressResponse,
+  ) {
     const user = await this.usersService.getById(body.id);
     if (user) {
-      const avatar = user.avatar;
-      const base64EncodedAvatar = Buffer.from(avatar).toString('base64');
-      return {
+      if (body.login) {
+        await this.usersService.updateLogin(user, body.login);
+      }
+      const base64EncodedAvatar = Buffer.from(user.avatar).toString('base64');
+      return res.status(200).send({
         avatar: base64EncodedAvatar,
         login: user.login,
         status: user.status,
-      }
+      });
     }
+  }
+
+  @Get('profile/:id')
+  async initProfile(@Param('id') id: string, @Res() res: ExpressResponse) {
+    const user = await this.usersService.getById(Number.parseInt(id));
+    if (user) {
+      const base64EncodedAvatar = Buffer.from(user.avatar).toString('base64');
+      return res.status(200).send({
+        avatar: base64EncodedAvatar,
+        login: user.login,
+        status: user.status,
+      });
+    }
+  }
+
+  @Get('leaderboard')
+  async getLeaders(@Res() res: ExpressResponse) {
+    const data = await this.usersService.getLeaderboard();
+    if (data) {
+      return res.status(200).send(data);
+    }
+    return res.status(400).send('Failed to request the leaderboard.');
   }
 }

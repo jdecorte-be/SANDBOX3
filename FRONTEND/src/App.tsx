@@ -7,6 +7,7 @@ import { Code2FA } from './components/Code2FA';
 import { FileUpload } from './components/FileUpload';
 import { Profile } from './components/Profile';
 import axios from 'axios';
+import { Leaderboard } from './components/Leaderboard';
 //import { Gaming } from './components/Canvas';
 
 function App() {
@@ -52,6 +53,7 @@ function App() {
       <SignIn />
       <Code2FA />
       <Profile />
+      <Leaderboard />
       {/* <button onClick={click}>Who</button> */}
       {/* <button onClick={addLobby}>Create Lobby</button> */}
       {/* <button onClick={joinLobby}>Join Lobby</button> */}
