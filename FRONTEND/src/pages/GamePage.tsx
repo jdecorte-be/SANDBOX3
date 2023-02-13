@@ -1,5 +1,6 @@
 import {game} from "./All";
 import {useNavigate} from "react-router-dom";
+import Nav from "../components/NavBar";
 
 function GamePage() {
 
@@ -29,6 +30,7 @@ function GamePage() {
     });
     return (
         <div>
+            <Nav/>
             {game.Canvas()}
             <button onClick={onReady}>IM FUCKING READY</button>
         </div>);

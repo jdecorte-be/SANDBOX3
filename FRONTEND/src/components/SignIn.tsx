@@ -22,7 +22,7 @@ export const SignIn = () => {
         document.cookie = response.data;
         console.log('token = ', response.data);
         sessionStorage.setItem('currentUser', login);
-        navigate('/Move');
+        navigate('/HomePage');
       })
       .catch((error) => {
         console.log(error);

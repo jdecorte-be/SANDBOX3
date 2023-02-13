@@ -1,6 +1,7 @@
 import { game } from "./All";
 import axios from "axios";
 import { useNavigate} from "react-router-dom";
+import Nav from "../components/NavBar";
 
 function LobbyPage() {
 
@@ -49,6 +50,7 @@ function LobbyPage() {
 
     return (
         <div>
+            <Nav/>
             <button onClick={click}>Who</button>
             <button onClick={addLobby}> ADD CLASSIC LOBBY </button>
             <button onClick={addRainbowLobby}> ADD RAINBOW MODE LOBBY </button>

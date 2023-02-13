@@ -1,17 +1,17 @@
 import {Link} from "react-router-dom";
 import React from "react";
 import {Gaming} from "../components/Canvas";
+import Nav from "../components/NavBar";
 
 export var game = new Gaming(1000, 1000);
 
-const MovePage = () => {
+const HomePage = () => {
     game.socketInit();
     return (
         <div>
-            <Link to="/" className="btn btn-primary">Home</Link><div/>
-            <Link to="/Lobby" className="btn btn-primary">Lobby</Link><div/>
+            <Nav/>
         </div>
     );
 }
 
-export default MovePage;
+export default HomePage;
