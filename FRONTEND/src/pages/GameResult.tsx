@@ -1,27 +1,32 @@
-import { game } from "./All";
-
-function Disconnected() {
-    return (
-        <div>
-            <h1>You LOST</h1>
-            <p>You were disconnected from the server.</p>
-        </div>
-    );
-}
+import {useNavigate} from "react-router-dom";
 
 
 function GameWon() {
+    const Navigate = useNavigate();
     return (
         <div>
             <h1>YOU WON</h1>
+            <button onClick={() => Navigate('/Move')}>Back to Main Menu</button>
         </div>
     );
 }
 
 function GameLost() {
+    const Navigate = useNavigate();
     return (
         <div>
             <h1>YOU LOST</h1>
+            <button onClick={() => Navigate('/Move')}>Back to Main Menu</button>
+        </div>
+    );
+}
+
+function GameDraw() {
+    const Navigate = useNavigate();
+    return (
+        <div>
+            <h1>You Drawed</h1>
+            <button onClick={() => Navigate('/Move')}>Back to Main Menu</button>
         </div>
     );
 }
@@ -37,4 +42,4 @@ function GameResult ()
 }
 
 export default GameResult;
-export {GameWon, GameLost, Disconnected};
+export {GameWon, GameLost, GameDraw};

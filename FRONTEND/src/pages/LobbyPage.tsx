@@ -1,8 +1,6 @@
 import { game } from "./All";
 import axios from "axios";
 import { useNavigate} from "react-router-dom";
-import {Simulate} from "react-dom/test-utils";
-import error = Simulate.error;
 
 function LobbyPage() {
 

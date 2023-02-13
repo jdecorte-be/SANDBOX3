@@ -11,7 +11,6 @@ import RoomWaiting from "../pages/RoomWaiting";
 import SpectatePage from "../pages/Spectate";
 import {GameWon} from "../pages/GameResult";
 import {GameLost} from "../pages/GameResult";
-import {Disconnected} from "../pages/GameResult";
 
 function Pathing(){
     return (
@@ -24,7 +23,6 @@ function Pathing(){
             <Route path='/Spectate' element={<SpectatePage/>}/>
             <Route path='/GameWon' element={<GameWon/>}/>
             <Route path='/GameLost' element={<GameLost/>}/>
-            <Route path='/Disconnected' element={<Disconnected/>}/>
         </Routes>
     )
 }
