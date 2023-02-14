@@ -15,7 +15,7 @@ function ColorSchemesExample() {
         <Container fluid>
           <Navbar.Brand as={Link} to ="/HomePage">Ping Pong :)</Navbar.Brand>
           <Nav>
-              <Nav.Link as={Link} to='/Game'><GiGamepadCross/></Nav.Link>
+              {/* <Nav.Link as={Link} to='/Game'><GiGamepadCross/></Nav.Link> */}
               <Nav.Link as={Link} to="/Lobby"><GiRadarSweep/></Nav.Link>
               <Nav.Link as={Link} to="/leaderboard"><GiPodium/></Nav.Link>
               <Nav.Link as={Link} to="/Profile"><FaUserAlt/></Nav.Link>

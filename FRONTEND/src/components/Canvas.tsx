@@ -2,7 +2,7 @@ import React, {useEffect, useRef} from 'react';
 import io from "socket.io-client";
 
 let canvas:any;
-//let keypress = false;
+let running: boolean = false;
 let context:any;
 
 class Player
@@ -109,6 +109,7 @@ export class Gaming{
         DrawBall(this.Info.Balling.x, this.Info.Balling.y, this.Info.Balling.radius, this.Info.Balling.color);
     }
     Canvas = () => {
+        
         const canvasRef = useRef<HTMLCanvasElement>(null);
         useEffect(() => {
             if (canvasRef.current) {
