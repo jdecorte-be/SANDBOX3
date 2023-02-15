@@ -2,53 +2,48 @@ import React from 'react';
 import {useRef} from 'react';
 import { Container } from 'react-bootstrap';
 import Button from 'react-bootstrap/Button';
+import Form from 'react-bootstrap/Form';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import Nav from 'react-bootstrap/Nav';
+import Navbar from 'react-bootstrap/Navbar';
+import {Route, Routes, Link, Router} from "react-router-dom";
+import SignIn from './SignIn';
 
 const Search = () => {
-    const [Login, setLogin] = React.useState('');
-    const [Password, setPassword] = React.useState('');
-    const [Tel, setTel] = React.useState('');
-
-    const handleSubmitButton = (event:any) => {
-        event.preventDefault();
-        const formData = new FormData(event.currentTarget);
-        const form = {
-            Login: formData.get('Login'),
-            Password: formData.get('Password'),
-            Tel: formData.get('Tel'),
-        };
-        console.log('form = ', form);
-      }
-    const inputRef = useRef(null);
     return (
-      <div className='container'>
-        <div>
-          <form onSubmit={handleSubmitButton}>
-          <input type="text" 
-          name="Login"
-          placeholder="Login"
-          value={Login}
-          onChange={(e) => setLogin(e.target.value)}
-          />
-          <div/>
-          <input type="password"
-          name="Password"
-          placeholder="Password"
-          value={Password}
-          onChange={(e) => setPassword(e.target.value)}
-          />
-          <div/>
-          <input type="text"
-          name="Tel"
-          placeholder="Tel"
-          value={Tel}
-          onChange={(e) => setTel(e.target.value)}
-          />
-          <div/>
-          <Button as="input" type="submit" value="Submit" />
-          </form>
+      <div className="mc-menu">
+        <div className="mc-button full">
+          <Nav.Link as={Link} to="/SignIn" className="title">Login</Nav.Link>
+        </div>
+        <div className="mc-button full">
+          <Nav.Link as={Link} to="/SignUp" className="title">SignUp</Nav.Link>
         </div>
       </div>
     );
+      //     name="Login"
+      //     placeholder="Login"
+      //     value={Login}
+      //     onChange={(e) => setLogin(e.target.value)}
+      //     />
+      //     <div/>
+      //     <input type="password"
+      //     name="Password"
+      //     placeholder="Password"
+      //     value={Password}
+      //     onChange={(e) => setPassword(e.target.value)}
+      //     />
+      //     <div/>
+      //     <input type="text"
+      //     name="Tel"
+      //     placeholder="Tel"
+      //     value={Tel}
+      //     onChange={(e) => setTel(e.target.value)}
+      //     />
+      //     <div/>
+      //     <Button as="input" type="submit" value="Submit" />
+      //     </form>
+      //   </div>
   };
 
 export default Search;

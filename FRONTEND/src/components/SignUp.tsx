@@ -1,17 +1,23 @@
 import { useState } from 'react';
 import axios from 'axios';
+import Nav from 'react-bootstrap/Nav';
+import Navbar from 'react-bootstrap/Navbar';
+import { useNavigate} from "react-router-dom";
+import {Route, Routes, Link, Router} from "react-router-dom";
 
 export const SignUp = () => {
-  const [login, setLogin] = useState('');
-  const [password, setPassword] = useState('');
+  const [Login, setLogin] = useState('');
+  const [Password, setPassword] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
 
+  const navigate = useNavigate();
   const handleSubmit = async (event: any) => {
     event.preventDefault();
+    console.log('uh');
     const formData = new FormData(event.currentTarget);
     const form = {
-      login: formData.get('login'),
-      password: formData.get('password'),
+      Login: formData.get('Login'),
+      Password: formData.get('Password'),
       phoneNumber: formData.get('tel'),
     };
     axios
@@ -21,6 +27,7 @@ export const SignUp = () => {
       .then((response) => {
         document.cookie = response.data.Authorization;
         console.log(response.data.Authorization);
+        navigate('/SignIn');
       })
       .catch((error) => {
         console.log(error);
@@ -28,29 +35,30 @@ export const SignUp = () => {
   };
 
   return (
-    <div>
-      <h1>SIGNUP</h1>
+    <div className='flex-container'>
       <div>
+      <h1 className='text-center'>SIGNUP</h1>
         <form onSubmit={handleSubmit}>
-          <input
+          <div className="mc-menu">
+          <input className="mc-button full"
             required
             type="text"
-            name="login"
+            name="Login"
             maxLength={15}
-            placeholder="login"
-            value={login}
+            placeholder="Login"
+            value={Login}
             onChange={(e) => setLogin(e.target.value)}
           />
-          <input
+          <input className="mc-button full"
             required
-            type="password"
-            name="password"
+            type="Password"
+            name="Password"
             maxLength={15}
-            placeholder="password"
-            value={password}
+            placeholder="Password"
+            value={Password}
             onChange={(e) => setPassword(e.target.value)}
           />
-          <input
+          <input className="mc-button full"
             type="tel"
             name="tel"
             maxLength={15}
@@ -58,7 +66,8 @@ export const SignUp = () => {
             value={phoneNumber}
             onChange={(e) => setPhoneNumber(e.target.value)}
           />
-          <button type="submit">SUBMIT</button>
+          </div>
+            <button className="mc-button full">SUBMIT</button>
         </form>
       </div>
     </div>

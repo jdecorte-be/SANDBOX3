@@ -6,10 +6,7 @@ import Test from "../pages/Test";
 
 const ConnectionPage = () => {
     return (
-        <div>
-            <SignUp/>
-            <SignIn/>
-            <Code2FA/>
+        <div className="flex-container">
             <Test/>
         </div>);
 }

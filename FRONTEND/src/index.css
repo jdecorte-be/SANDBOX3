@@ -19,26 +19,181 @@ li:first-child{
     color: rgb(225, 255, 0);
 }
 
+.cfb{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.Container{
+    font-family: arial;
+  font-size: 24px;
+  margin: 25px;
+  width: 350px;
+  height: 200px;
+  outline: dashed 1px black;
+  /* Setup */
+  position: relative;
+  background-color: aqua;
+}
+
+.child{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #30cf25;
+    padding: 10px;
+    border-radius: 10%;
+}
+
+.cbtn{
+  
+}
+
+*, ::before, ::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* /////////////////////////////////////////////////////////////////// */
+html {
+  font: 12pt "Minecraftia", sans-serif;
+}
+
 body {
-    background-color: white;
-    text-align: center;
-    /* padding: 40px; */
-    font-family: Arial, Helvetica, sans-serif;
+  height: 100vh;
+  /* display: flex; */
+  /* justify-content: center; */
+  /* align-items: center; */
+  background-color: #fff;
+  background-image: url("https://www.zelda.com/breath-of-the-wild/assets/media/header/Main-Day.jpg");
+  background-size: cover;
+  background-position: center;
+  position: relative;
 }
 
-.container {
-        /* width: 12rem;
-        height: 12rem; */
-        background-color: white;
-        border-radius: 10px;
-        box-shadow: rgba(9, 30, 66, 0.25) 0px 4px 8px -2px, rgba(9, 30, 66, 0.08) 0px 0px 0px 1px;
-        justify-content: center;
-        align-items: center;
-        box-sizing: border-box;
+
+/* Minecraft Style Menu */
+.mc-menu {
+  --btn-size: 30pt;
+  /* justify-content: center; */
+  display: grid;
+  grid-template-columns: var(--btn-size) calc(var(--btn-size) * 10) var(--btn-size);
+  grid-template-rows: repeat(3, var(--btn-size)) 16px var(--btn-size);
+  grid-template-areas: ". 		first 		." ". 		second 		." ". 		third 		." ".		.					." "lang fourth 		.";
+  grid-gap: 8px;
+}
+.mc-menu .mc-button:nth-child(1) {
+  grid-area: first;
+}
+.mc-menu .mc-button:nth-child(2) {
+  grid-area: second;
+}
+.mc-menu .mc-button:nth-child(3) {
+  grid-area: third;
+}
+.mc-menu .double {
+  grid-area: fourth;
+}
+.mc-menu .double .mc-button:nth-child(1) {
+  grid-area: left;
+}
+.mc-menu .double .mc-button:nth-child(2) {
+  grid-area: right;
+}
+.mc-menu .mc-button:nth-child(5) {
+  grid-area: lang;
+}
+.mc-menu .double {
+  width: 100%;
+  /* justify-content: center; */
+  height: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr;
+  grid-template-areas: "left right";
+  grid-gap: 8px;
 }
 
-input {
-    padding:10px;
-    border-radius:10px;
-    box-shadow: rgba(9, 30, 66, 0.25) 0px 4px 8px -2px, rgba(9, 30, 66, 0.08) 0px 0px 0px 1px;
+/* Minecraft Style Button */
+.mc-button {
+  /* justify-content: center; */
+  height: var(--btn-size);
+  width: calc(var(--btn-size) * 10);
+  cursor: pointer;
+  overflow: hidden;
+  white-space: nowrap;
+  user-select: none;
+  background: #999 url("https://i.ibb.co/rb2TWXL/bgbtn.png") center/cover;
+  image-rendering: pixelated;
+  border: 2px solid #000;
+  /* Mouse over */
+  /* Button title */
+  /* Others */
+}
+
+
+.mc-button:hover .title {
+  background-color: rgba(100, 100, 255, 0.45);
+  text-shadow: 2px 2px #202013CC;
+  color: #FFFFA0;
+}
+.mc-button:active .title {
+  box-shadow: inset -2px -4px #0004, inset 2px 2px #FFF5;
+}
+.mc-button .title {
+  width: 100%;
+  height: 100%;
+  padding-bottom: 0.3em;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #DDD;
+  text-shadow: 2px 2px #000A;
+  box-shadow: inset -2px -4px #0006, inset 2px 2px #FFF7;
+}
+.mc-button.full {
+  width: 100%;
+  height: 100%;
+}
+.mc-button.lang img {
+  width: 26px;
+  height: 26px;
+}
+.mc-button.lang .title {
+  padding-bottom: 0;
+}
+
+.mc-typing{
+  width: 100%;
+  height: 100%;
+  padding-bottom: 0.3em;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #DDD;
+  text-shadow: 2px 2px #000A;
+  box-shadow: inset -2px -4px #0006, inset 2px 2px #FFF7;
+}
+
+
+::placeholder {
+  color: #DDD;
+  text-shadow: 2px 2px #000A;
+  text-align: center;
+
+}
+
+.flex-container {
+  height: 100vh;
+  display: flex; 
+  justify-content: center;
+  align-items: center;
+}
+
+.text-center{
+  text-align: center;
 }

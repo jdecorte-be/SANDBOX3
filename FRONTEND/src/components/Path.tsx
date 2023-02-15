@@ -13,6 +13,9 @@ import {GameWon} from "../pages/GameResult";
 import {GameLost} from "../pages/GameResult";
 import HomePage from '../pages/All';
 import ProfilePage from '../pages/ProfilePage';
+import SignUpPage from '../pages/SignUp';
+import SignInPage from '../pages/SignIn';
+import MenuPage from '../pages/Menu';
 
 
 function Pathing(){
@@ -28,6 +31,8 @@ function Pathing(){
             <Route path='/GameLost' element={<GameLost/>}/>
             <Route path='/Leaderboard' element={<LeaderboardPage/>}/>
             <Route path='/Profile' element={<ProfilePage/>}/>
+            <Route path='/SignUp' element={<SignUpPage/>}/>
+            <Route path='/SignIn' element={<SignInPage/>}/>
         </Routes>
     )
 }
