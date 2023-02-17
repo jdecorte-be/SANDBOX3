@@ -1,4 +1,4 @@
-import { game } from "./All";
+import { game } from "./CoPage";
 
 function SpectatePage () {
 

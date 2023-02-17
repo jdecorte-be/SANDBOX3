@@ -1,4 +1,4 @@
-import {game} from "./All";
+import { game } from "./CoPage";
 import {useNavigate} from "react-router-dom";
 import Nav from "../components/NavBar";
 

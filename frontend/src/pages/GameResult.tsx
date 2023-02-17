@@ -6,7 +6,7 @@ function GameWon() {
     return (
         <div>
             <h1>YOU WON</h1>
-            <button onClick={() => Navigate('/Move')}>Back to Main Menu</button>
+            <button onClick={() => Navigate('/HomePage')}>Back to Main Menu</button>
         </div>
     );
 }
@@ -16,7 +16,7 @@ function GameLost() {
     return (
         <div>
             <h1>YOU LOST</h1>
-            <button onClick={() => Navigate('/Move')}>Back to Main Menu</button>
+            <button onClick={() => Navigate('/HomePage')}>Back to Main Menu</button>
         </div>
     );
 }
@@ -26,7 +26,7 @@ function GameDraw() {
     return (
         <div>
             <h1>You Drawed</h1>
-            <button onClick={() => Navigate('/Move')}>Back to Main Menu</button>
+            <button onClick={() => Navigate('/HomePage')}>Back to Main Menu</button>
         </div>
     );
 }

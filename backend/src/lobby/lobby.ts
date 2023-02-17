@@ -42,16 +42,20 @@ export class LobbyManager {
         if (this.isInLobby(login))
             throw new Error('Player already in lobby');
         let tLobby;
-        tLobby = this.LobbyList.find((lobby) => lobby.id === id.toString());
+        if (this.LobbyList.length === 0)
+            throw new Error('No lobby available');
+        tLobby = this.LobbyList.at(id);
         while (tLobby) {
 
             if (tLobby && tLobby.Players.length < 2) {
+                tLobby.id = id.toString();
                 if (tLobby.Players.push(login)) {
                     tLobby.socketing.set(login, client);
                     client.join(tLobby.id);
-                    console.log(client.data.username + ' joined lobby ' + tLobby.id);
+                    tLobby.Instance.setRoom(this.Room);
+                    
+                    console.log('client joined lobby ' + tLobby.id.toString());
                     if (tLobby.Players.length === 2) {
-                        this.Room.to('0').emit('Test');
                         tLobby.Instance.setRoom(this.Room);
                         tLobby.socketing.get(tLobby.Players[0])?.emit('Ready');
                         tLobby.socketing.get(tLobby.Players[1])?.emit('Ready');
@@ -62,7 +66,7 @@ export class LobbyManager {
                 }
             }
             id++;
-            tLobby = this.LobbyList.find((lobby) => lobby.id === id.toString());
+            tLobby = this.LobbyList.at(id);
         }
         throw new Error('Lobby not found or full');
     }
@@ -81,14 +85,17 @@ export class LobbyManager {
             if (index > -1) {
                 if (tLobby.Instance.Disconnect(login) === "STOP")
                 {
-                    if (tLobby.Instance.getInfo().Player1.score > tLobby.Instance.getInfo().Player2.score) {
-                        tLobby.socketing.get(tLobby.Instance.getInfo().Player1.name)?.emit("GameWon");
-                        tLobby.socketing.get(tLobby.Instance.getInfo().Player2.name)?.emit("Disconnected");
-                        console.log('Player 1 won');
-                    }
-                    else if (tLobby.Instance.getInfo().Player1.score < tLobby.Instance.getInfo().Player2.score){
+                    if (tLobby.Instance.getInfo().Player1.name === login)
+                    {
                         tLobby.socketing.get(tLobby.Instance.getInfo().Player2.name)?.emit("GameWon");
                         tLobby.socketing.get(tLobby.Instance.getInfo().Player1.name)?.emit("Disconnected");
+                        console.log('Player 1 won');
+
+                    }
+                    else if (tLobby.Instance.getInfo().Player2.name === login)
+                    {
+                        tLobby.socketing.get(tLobby.Instance.getInfo().Player1.name)?.emit("GameWon");
+                        tLobby.socketing.get(tLobby.Instance.getInfo().Player2.name)?.emit("Disconnected");
                         console.log('Player 2 won');
                     }
                     else
@@ -103,6 +110,7 @@ export class LobbyManager {
             }
         }
     }
+
     printLobby() {
         console.log(this.LobbyList);
     }

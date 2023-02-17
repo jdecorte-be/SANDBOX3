@@ -1,4 +1,4 @@
-import { game } from "./All";
+import { game } from "./CoPage";
 import axios from "axios";
 import { useNavigate} from "react-router-dom";
 import Nav from 'react-bootstrap/Nav';
@@ -17,27 +17,15 @@ function LobbyPage() {
             console.log(error);
         });
     }
-    const addLobby = () => {
-            game.socket.emit('CreateLobby').then(() => {
-                alert("Lobby Created");
-            });
-    }
-    const addRainbowLobby = () => {
-        game.socket.emit('CreateRainbowLobby');
-    }
     const joinLobby = () => {
-        game.socket.emit('JoinLobby');
+        game.socket.emit('JoinLobby')
     }
     const leaveLobby = () => {
         game.socket.emit('LeaveLobby')
     }
-    const printLobby = () => {
-        game.socket.emit('LobbyInfo');
-    }
     const SpectateLobby = () => {
             game.socket.emit('Spectate');
     }
-
     game.socket.on('Waiting Room', () => {
         Navigate('/RoomWaiting');
     });
@@ -58,13 +46,13 @@ function LobbyPage() {
             <div className="flex-container">
                 <div className="mc-menu">
                     <div className="mc-button full">
-                        <Nav.Link onClick={addLobby} className="title">Create Lobby</Nav.Link>
+                        <Nav.Link as={Link} to="/CreateLobby" className="title">Create Lobby</Nav.Link>
                     </div>
                     <div className="mc-button full">
-                        <Nav.Link as={Link} to="/Settings" className="title">Find Lobby</Nav.Link>
+                        <Nav.Link onClick={joinLobby} className="title">Find Lobby</Nav.Link>
                     </div>
                     <div className="mc-button full">
-                        <Nav.Link as={Link} to="/Profile" className="title">Spectate Lobby</Nav.Link>
+                        <Nav.Link as={Link} to="/Spectate" className="title">Spectate Lobby</Nav.Link>
                     </div>
                 </div>
             </div>

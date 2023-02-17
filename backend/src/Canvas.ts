@@ -93,11 +93,17 @@ export class gameInfo {
 
     }
     CheckMove(id: string){
-        console.log(this.Connected);
-        if (this.Connected.indexOf(id) === 0)
+        console.log(this);
+        if (this.Player1.name === id)
+        {
+            console.log("Player 1 :", id);
             return this.Player1;
-        else if (this.Connected.indexOf(id) === 1)
+        }
+        else if (this.Player2.name === id)
+        { 
+            console.log("Player 2 :", id);
             return this.Player2;
+        }
     }
     MoveHandler(){
         if (this.Player1.moveUp === true)
@@ -111,15 +117,15 @@ export class gameInfo {
     }
     setMove(id: string, move: string, state: boolean){
         if (move === "UP") {
-            if (this.Connected.indexOf(id) === 0)
+            if (this.Player1.name === id)
                 this.Player1.moveUp = state;
-            else if (this.Connected.indexOf(id) === 1)
+            else if (this.Player2.name === id)
                 this.Player2.moveUp = state;
         }
         else if (move === "DOWN") {
-            if (this.Connected.indexOf(id) === 0)
+            if (this.Player1.name === id)
                 this.Player1.moveDown = state;
-            else if (this.Connected.indexOf(id) === 1)
+            else if (this.Player2.name === id)
                 this.Player2.moveDown = state;
         }
     }

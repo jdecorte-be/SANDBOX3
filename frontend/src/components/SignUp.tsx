@@ -1,23 +1,20 @@
 import { useState } from 'react';
 import axios from 'axios';
-import Nav from 'react-bootstrap/Nav';
-import Navbar from 'react-bootstrap/Navbar';
-import { useNavigate} from "react-router-dom";
-import {Route, Routes, Link, Router} from "react-router-dom";
+import { useNavigate } from 'react-router-dom';
 
 export const SignUp = () => {
-  const [Login, setLogin] = useState('');
-  const [Password, setPassword] = useState('');
-  const [phoneNumber, setPhoneNumber] = useState('');
 
   const navigate = useNavigate();
+  const [login, setLogin] = useState('');
+  const [password, setPassword] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
+
   const handleSubmit = async (event: any) => {
     event.preventDefault();
-    console.log('uh');
     const formData = new FormData(event.currentTarget);
     const form = {
-      Login: formData.get('Login'),
-      Password: formData.get('Password'),
+      login: formData.get('login'),
+      password: formData.get('password'),
       phoneNumber: formData.get('tel'),
     };
     axios
@@ -43,19 +40,19 @@ export const SignUp = () => {
           <input className="mc-button full"
             required
             type="text"
-            name="Login"
+            name="login"
             maxLength={15}
-            placeholder="Login"
-            value={Login}
+            placeholder="login"
+            value={login}
             onChange={(e) => setLogin(e.target.value)}
           />
           <input className="mc-button full"
             required
-            type="Password"
-            name="Password"
+            type="password"
+            name="password"
             maxLength={15}
-            placeholder="Password"
-            value={Password}
+            placeholder="password"
+            value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
           <input className="mc-button full"

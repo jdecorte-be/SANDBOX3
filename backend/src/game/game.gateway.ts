@@ -68,14 +68,18 @@ export class GameGateway {
         @MessageBody() data: string,
         @ConnectedSocket() client: Socket,
     ): any {
+        if (this.LobbyManager.isInLobby(client.data.username) &&
+        this.LobbyManager.getUserLobby(client.data.username).Ready.length === 1 &&
+        this.LobbyManager.getUserLobby(client.data.username).Ready[0] === client.data.username)
+            throw new Error('You are already ready');
         console.log(`${client.data.username} is ready to play`);
         if (this.LobbyManager.isInLobby(client.data.username))
             this.LobbyManager.getUserLobby(client.data.username).Ready.push(client.data.username);
         if (this.LobbyManager.getUserLobby(client.data.username).Ready.length === 2) {
             this.LobbyManager.getUserLobby(client.data.username).Instance.Info.Connected.push(this.LobbyManager.getUserLobby(client.data.username).Ready[0]);
             this.LobbyManager.getUserLobby(client.data.username).Instance.Info.Connected.push(this.LobbyManager.getUserLobby(client.data.username).Ready[1]);
-            this.LobbyManager.getUserLobby(client.data.username).Instance.Info.Player1.name = this.LobbyManager.getUserLobby(client.data.username).Ready[0];
-            this.LobbyManager.getUserLobby(client.data.username).Instance.Info.Player2.name = this.LobbyManager.getUserLobby(client.data.username).Ready[1];
+            this.LobbyManager.getUserLobby(client.data.username).Instance.Info.Player1.name = this.LobbyManager.getUserLobby(client.data.username).Players[0];
+            this.LobbyManager.getUserLobby(client.data.username).Instance.Info.Player2.name = this.LobbyManager.getUserLobby(client.data.username).Players[1];
             this.LobbyManager.getUserLobby(client.data.username).Instance.rendering(client);
         }
     }
@@ -99,7 +103,7 @@ export class GameGateway {
         console.log('Attempting to create a lobby');
         this.LobbyManager.createLobby("Classic");
         console.log(this.LobbyManager.LobbyList.length);
-
+        return "You have create a Classic lobby";
     }
     @SubscribeMessage('CreateRainbowLobby')
     handleCreateRainbowLobby(
@@ -109,7 +113,7 @@ export class GameGateway {
         console.log('Attempting to create A Rainbow lobby');
         this.LobbyManager.createLobby("Rainbow");
         console.log(this.LobbyManager.LobbyList.length);
-
+        return "You have create a Rainbow lobby";
     }
     @SubscribeMessage('JoinLobby')
     handleJoinLobby(
@@ -118,6 +122,7 @@ export class GameGateway {
     ): any {
         console.log('Player joining lobby', client.data.username);
         this.LobbyManager.JoinLobby(client.data.username, client);
+        return "Lobby joined";
     }
 
     @SubscribeMessage('LeaveLobby')

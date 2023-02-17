@@ -16,7 +16,9 @@ import ProfilePage from '../pages/ProfilePage';
 import SignUpPage from '../pages/SignUp';
 import SignInPage from '../pages/SignIn';
 import MenuPage from '../pages/Menu';
-
+import CreateLobbyPage from '../pages/CreateLobby';
+import CoPage from "../pages/CoPage";
+import SettingsPage from "../pages/SettingsPage";
 
 function Pathing(){
     return (
@@ -33,6 +35,11 @@ function Pathing(){
             <Route path='/Profile' element={<ProfilePage/>}/>
             <Route path='/SignUp' element={<SignUpPage/>}/>
             <Route path='/SignIn' element={<SignInPage/>}/>
+            <Route path='/CreateLobby' element={<CreateLobbyPage/>}/>
+            <Route path='/CoPage' element={<CoPage/>}/>
+            <Route path='/Settings' element={<SettingsPage/>}/>
+            <Route path='/Spectate' element={<SpectatePage/>}/>
+
         </Routes>
     )
 }
