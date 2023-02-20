@@ -119,9 +119,6 @@ export class Gaming{
                     context.beginPath();
                     context.fillStyle = '#163eab';
                     context.fillRect(0, 0, context.canvas.width, context.canvas.height);
-                    //this.Info.Player2.x = props.Player1.x;
-                    //this.Info.Balling.x = props.Balling.x;
-                    //this.Info.Player1.max = props.Player1.max;
                 }
                 setInterval(this.Draw, 1);
                 canvas.tabIndex = 1;
@@ -156,12 +153,6 @@ export class Gaming{
         return <canvas ref={canvasRef} height={this.Info.CDimension.height} width={this.Info.CDimension.height}/>;
     }
 }
-
-// type CanvasProps = {
-//     Player1:Player;
-//     Ball:Ball;
-//     Dimension:any;
-// }
 
 function DrawScore(x:number, y:number, color:string, text:string)
 {

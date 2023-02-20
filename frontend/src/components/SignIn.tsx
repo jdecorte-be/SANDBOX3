@@ -1,9 +1,6 @@
 import axios from 'axios';
 import { useState } from 'react';
 import { useNavigate} from "react-router-dom";
-import Nav from 'react-bootstrap/Nav';
-import Navbar from 'react-bootstrap/Navbar';
-import {Route, Routes, Link, Router} from "react-router-dom";
 
 export const SignIn = () => {
   const [login, setLogin] = useState('');

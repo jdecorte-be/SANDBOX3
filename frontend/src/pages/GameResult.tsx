@@ -1,6 +1,5 @@
 import {useNavigate} from "react-router-dom";
 
-
 function GameWon() {
     const Navigate = useNavigate();
     return (
@@ -31,15 +30,4 @@ function GameDraw() {
     );
 }
 
-
-function GameResult ()
-{
-    return (
-        <div>
-            <h1>Game Result</h1>
-        </div>
-    );
-}
-
-export default GameResult;
 export {GameWon, GameLost, GameDraw};

@@ -1,9 +1,6 @@
 import { game } from "./CoPage";
-import axios from "axios";
-import { useNavigate} from "react-router-dom";
 import Nav from 'react-bootstrap/Nav';
 import Navb from "../components/NavBar";
-import {Route, Routes, Link, Router} from "react-router-dom";
 
 function CreateLobbyPage(){
     

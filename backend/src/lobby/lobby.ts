@@ -119,7 +119,6 @@ export class LobbyManager {
         if (tLobby)
             return tLobby.Instance;
         else
-            //throw new Error('Lobby/Instance not found');
             console.log('Lobby/Instance not found');
         return undefined;
     }
@@ -145,7 +144,7 @@ export class LobbyManager {
             throw new Error('Player already in lobby');
         let id = 0;
         let tLobby;
-        tLobby = this.LobbyList.find((lobby) => lobby.id === id.toString());
+        tLobby = this.LobbyList.at(id);
         while (tLobby) {
             if (tLobby && tLobby.Spectators.length < 2) {
                 if (tLobby.Spectators.push(login)) {
@@ -154,7 +153,7 @@ export class LobbyManager {
                 }
             }
             id++;
-            tLobby = this.LobbyList.find((lobby) => lobby.id === id.toString());
+            tLobby = this.LobbyList.at(id);
         }
         throw new Error('Lobby not found or full');
     }

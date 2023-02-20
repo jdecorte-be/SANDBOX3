@@ -1,12 +1,10 @@
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
-import {Route, Routes, Link, Router} from "react-router-dom";
-import Game from "../pages/GamePage";
+import {Link} from "react-router-dom";
 import React from "react";
 import { FaUserAlt, FaRunning } from 'react-icons/fa'
-import { GiPodium, GiGamepadCross, GiRadarSweep } from 'react-icons/gi'
-import { BiRun } from 'react-icons/bi'
+import { GiPodium, GiRadarSweep } from 'react-icons/gi'
 
 
 function ColorSchemesExample() {

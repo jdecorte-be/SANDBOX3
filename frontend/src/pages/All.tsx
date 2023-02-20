@@ -1,9 +1,7 @@
 import {Link} from "react-router-dom";
 import React from "react";
-import {Gaming} from "../components/Canvas";
 import Navb from "../components/NavBar";
 import Nav from 'react-bootstrap/Nav';
-import { useNavigate} from "react-router-dom";
 
 const HomePage = () => {
     return (
