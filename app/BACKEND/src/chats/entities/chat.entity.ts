@@ -12,6 +12,7 @@ import {
 } from 'typeorm';
 import { InternalServerErrorException } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
+import { Messages } from '../../Messages/entities/messages.entity';
 
 
 
@@ -30,7 +31,7 @@ export class Chat extends BaseEntity {
   uuid: string;
 
   @Field()
-  @Column('varchar', { length: 20 })
+  @Column('varchar', { length: 15 })
   name: string;
 
   @Field({ nullable: true })
