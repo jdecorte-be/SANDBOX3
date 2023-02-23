@@ -30,6 +30,8 @@ async function bootstrap() {
     methods: ['GET', 'POST', 'PATCH', 'PUT'],
     optionsSuccessStatus: 200,
   });
+
+
   await app.listen(PORT);
   console.log(`App listening on port: ${PORT}`)
 }

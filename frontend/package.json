@@ -3,6 +3,17 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@apollo/client": "^3.7.6",
+    "@apollo/react-hooks": "^4.0.0",
+    "@emotion/react": "^11.10.5",
+    "@emotion/styled": "^11.10.5",
+    "@mantine/core": "^5.10.3",
+    "@mantine/form": "^5.10.3",
+    "@mantine/hooks": "^5.10.3",
+    "@mantine/notifications": "^5.10.3",
+    "@mantine/styles": "^5.10.3",
+    "@mui/material": "^5.11.8",
+    "@tabler/icons": "^2.2.0",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
@@ -13,12 +24,19 @@
     "axios": "^1.2.5",
     "express": "^4.18.2",
     "express-fileupload": "^1.4.0",
+    "react-hook-form": "^7.43.0",
+    "emoji-picker-react": "^4.4.7",
+    "graphql": "^16.6.0",
     "prettier": "^2.8.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-hook-form": "^7.43.0",
+    "react-hot-toast": "^2.4.0",
+    "react-icons": "^4.7.1",
     "react-scripts": "^5.0.1",
+    "react-scroll-to-bottom": "^4.2.0",
+    "reactjs-popup": "^2.0.5",
     "socket.io-client": "^4.5.4",
+    "tabler-icons-react": "^1.56.0",
     "typescript": "^4.9.4",
     "web-vitals": "^2.1.4"
   },
@@ -46,5 +64,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@graphql-codegen/cli": "^3.0.0"
   }
 }

@@ -7,9 +7,17 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { configValidationSchema } from './app.schemas';
 import { AuthenticationModule } from './authentication/authentication.module';
 import { GameGateway } from './game/game.gateway';
+import { ChatsModule } from './chats/chats.module';
+import { GraphQLModule } from '@nestjs/graphql';
+import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
+import { MessagesModule } from './Messages/messages.module';
 
 @Module({
   imports: [
+    GraphQLModule.forRoot<ApolloDriverConfig>({
+      driver: ApolloDriver,
+      autoSchemaFile: 'schema.gql',
+    }),
     TypeOrmModule.forRootAsync({
       imports: [
         ConfigModule.forRoot({
@@ -29,10 +37,13 @@ import { GameGateway } from './game/game.gateway';
           password: configService.get('DB_PASSWORD'),
           database: configService.get('DB_DATABASE'),
           autoLoadEntities: true,
+          entities: ['dist/**/*.entity{.ts,.js}'],
           synchronize: true,
         };
       },
     }),
+    ChatsModule,
+    MessagesModule,
   ],
   controllers: [AppController],
   providers: [AppService, GameGateway],
