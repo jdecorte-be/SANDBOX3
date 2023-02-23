@@ -29,6 +29,7 @@ const ChatBox = ({uuid, refetch} : any) => {
   return (
       <Stack sx={{ height: "8vh", bottom:0, position: 'absolute' }} justify="center" p={0}>
         <Group position="right">
+          
           <TextInput
             onKeyDown={(e) => {
                 if(e.keyCode === 13)

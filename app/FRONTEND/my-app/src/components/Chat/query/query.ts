@@ -59,6 +59,26 @@ query checkPassword($uuid : String!, $pass: String!) {
   checkChatPassword(uuid: $uuid, password: $pass)
 }
 `;
-
+export const MUTE = gql`
+mutation ToggleMute($uuid : String!, $userID: String!) {
+  toggleMute(uuid: $uuid, userID: $userID) {
+    muteID
+  }
+}
+`;
+export const KICK = gql`
+mutation ForcedOut($uuid : String!, $userID: String!) {
+  forcedOut(uuid: $uuid, userID: $userID) {
+    userID
+  }
+}
+`;
+export const ADMIN = gql`
+mutation ToggleAdmin($uuid : String!, $userID: String!) {
+  toggleAdmin(uuid: $uuid, userID: $userID) {
+    adminID
+  }
+}
+`;
 
 

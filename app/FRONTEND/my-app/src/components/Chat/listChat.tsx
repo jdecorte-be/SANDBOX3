@@ -21,8 +21,11 @@ export const ListChat = ({toggleShowCreate, chat_list} : any) => {
 
     const [dataChat, setDataChat] = useState({
         uuid: '',
-        chatname: '',
+        name: '',
         type: '',
+        ownerID: '',
+        userID: [],
+
     });
 
     /* -------------------------------------------------------------------------- */
@@ -58,19 +61,6 @@ export const ListChat = ({toggleShowCreate, chat_list} : any) => {
             chat_list.refetch();
         },
     });
-
-
-    
-    function openPublicChat(uuid: string, groupname: string, type: string) {
-        setDataChat({uuid: uuid, chatname: groupname, type: type});
-        toggleShowMessages();
-    }
-
-    function openPrivateChat(uuid: string, groupname: string, type: string) {
-        setDataChat({uuid: uuid, chatname: groupname, type: type});
-        toggleShowPassword()
-    }
-
 
     return (
         <div className="py-3 px-5">
@@ -115,7 +105,7 @@ export const ListChat = ({toggleShowCreate, chat_list} : any) => {
                             <Divider my="sm"/>
 
                                 {
-                                    chat_list.data && chat_list.data.aliveChats.map((elem : {name : string, ownerID: string, uuid : string, type: string}) => {
+                                    chat_list.data && chat_list.data.aliveChats.map((elem : {name : string, ownerID: string, uuid : string, type: string, userID: []}) => {
                                         return (
                                             elem.type === "public" &&
                                             <div style={{padding: "5px"}}>
@@ -123,7 +113,8 @@ export const ListChat = ({toggleShowCreate, chat_list} : any) => {
                                                     <Group>
                                                         <UnstyledButton
                                                         onClick={() => {
-                                                            openPublicChat(elem.uuid, elem.name, elem.type);
+                                                            setDataChat({uuid: elem.uuid, name: elem.name, type: elem.type, userID: elem.userID, ownerID: elem.ownerID});
+                                                            toggleShowMessages();
                                                         }}
                                                         >
                                                             <Group>
@@ -140,8 +131,8 @@ export const ListChat = ({toggleShowCreate, chat_list} : any) => {
                                                                 ><AiOutlineDelete size={20} color="red"></AiOutlineDelete></ActionIcon>
                                                                 <ActionIcon
                                                                     onClick={() => {
+                                                                        setDataChat({uuid: elem.uuid, name: elem.name, type: elem.type, userID: elem.userID, ownerID: elem.ownerID});
                                                                         toggleShowEdit();
-                                                                        setDataChat({uuid: elem.uuid, chatname: elem.name, type: elem.type});
                                                                     }
                                                                     }
                                                                 ><AiOutlineSetting size={20}></AiOutlineSetting></ActionIcon>
@@ -157,7 +148,7 @@ export const ListChat = ({toggleShowCreate, chat_list} : any) => {
                             <Divider my="sm" />
 
                             {
-                                    chat_list.data && chat_list.data.aliveChats.map((elem : {name : string, ownerID: string, uuid : string, type: string}) => {
+                                    chat_list.data && chat_list.data.aliveChats.map((elem : {name : string, ownerID: string, uuid : string, type: string, userID: []}) => {
                                         return (
                                             elem.type === "private" &&
                                             <div style={{padding: "5px"}}>
@@ -165,7 +156,8 @@ export const ListChat = ({toggleShowCreate, chat_list} : any) => {
                                                     <Group>
                                                         <UnstyledButton
                                                         onClick={() => {
-                                                            openPrivateChat(elem.uuid, elem.name, elem.type);
+                                                            setDataChat({uuid: elem.uuid, name: elem.name, type: elem.type, userID: elem.userID, ownerID: elem.ownerID});
+                                                            toggleShowPassword()
                                                         }}
                                                         >
                                                             <Group>
@@ -181,7 +173,12 @@ export const ListChat = ({toggleShowCreate, chat_list} : any) => {
                                                                     onClick={() => onRemoveHandler({variables : {uuid: elem.uuid}})}
                                                                 ><AiOutlineDelete size={20} color="red"></AiOutlineDelete></ActionIcon>
                                                                 <ActionIcon
-                                                                    onClick={() => setShowEdit(true)}
+                                                                    onClick={() => {
+                                                                        setDataChat({uuid: elem.uuid, name: elem.name, type: elem.type, userID: elem.userID, ownerID: elem.ownerID});
+                                                                        setShowEdit(true);
+
+                                                                    }
+                                                                    }
                                                                 ><AiOutlineSetting size={20}></AiOutlineSetting></ActionIcon>
                                                             </Group>
                                                         }
