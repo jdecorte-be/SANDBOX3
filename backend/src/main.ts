@@ -5,6 +5,7 @@ import { ConfigService } from '@nestjs/config';
 import * as cookieParser from 'cookie-parser';
 import * as session from 'express-session';
 import { ValidationPipe } from '@nestjs/common';
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -25,11 +26,17 @@ async function bootstrap() {
   );
   app.use(passport.initialize());
   app.use(passport.session());
-  app.enableCors({
-    origin: 'http://localhost:3000',
-    methods: ['GET', 'POST', 'PATCH'],
-    optionsSuccessStatus: 200,
-  });
+  app.enableCors();
+
+  const config = new DocumentBuilder()
+  .setTitle('API Doc')
+  .setVersion('1.0')
+  .build();
+
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api', app, document);
+
+
   await app.listen(PORT);
 }
 bootstrap();

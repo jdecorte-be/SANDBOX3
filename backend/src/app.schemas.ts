@@ -8,12 +8,6 @@ export const configValidationSchema = Joi.object({
   DB_USERNAME: Joi.string().required(),
   DB_PASSWORD: Joi.string().required(),
   DB_DATABASE: Joi.string().required(),
-  URL: Joi.string().required(),
-  UID: Joi.string().required(),
-  SECRET: Joi.string().required(),
   JWT_SECRET: Joi.string().required(),
   JWT_EXPIRATION_TIME: Joi.string().required(),
-  TWILIO_SID: Joi.string().required(),
-  TWILIO_AUTH_TOKEN: Joi.string().required(),
-  TWILIO_PHONE_NUMBER: Joi.string().required(),
 });
